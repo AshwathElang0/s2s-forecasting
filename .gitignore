@@ -1,0 +1,15 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Cached / downloaded data (large, reproducible from scripts)
+data_cache/
+*.grib2
+*.grib2.idx
