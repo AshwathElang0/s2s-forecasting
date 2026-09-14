@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+data_cache/
+runs/*
+!runs/*/
+runs/*/*
+!runs/*/results.md
