@@ -77,9 +77,15 @@ def build_climatology_threshold() -> xr.DataArray:
     return threshold
 
 
+import threading
+
+_SAVE_LOCK = threading.Lock()
+
+
 def process_init_date(
     init_date: dt.date,
     threshold: xr.DataArray,
+    cpc_weekly_all: xr.DataArray,
     oni,
     rmm,
 ) -> str:
@@ -100,9 +106,6 @@ def process_init_date(
     # merged into one Dataset.
     ensemble = ensemble.drop_vars(["time", "number", "surface"], errors="ignore")
 
-    years_needed = sorted({init_date.year, (init_date + dt.timedelta(days=28)).year})
-    cpc_daily = cpc.load_years(years_needed)
-    cpc_weekly_all = cpc.weekly_totals(cpc_daily)
     verif_weeks = []
     for w in LEAD_WEEKS:
         start = init_date + dt.timedelta(days=7 * (w - 1))
@@ -129,11 +132,27 @@ def process_init_date(
         ds.attrs["mjo_amplitude"] = float(row["amplitude"])
 
     PER_INIT_DIR.mkdir(parents=True, exist_ok=True)
-    ds.to_netcdf(out_path)
+    with _SAVE_LOCK:
+        ds.to_netcdf(out_path)
     return "OK"
 
 
+
+import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Build MVP dataset for S2S forecasting.")
+    parser.add_argument("--workers", type=int, default=4, help="Number of concurrent workers (default: 4)")
+    parser.add_argument("--max-dates", type=int, default=None, help="Max init dates to process (default: all)")
+    parser.add_argument("--start-date", type=str, default=str(MVP_START), help="Start date (YYYY-MM-DD)")
+    parser.add_argument("--end-date", type=str, default=str(MVP_END), help="End date (YYYY-MM-DD)")
+    args = parser.parse_args()
+
+    start_date = dt.date.fromisoformat(args.start_date)
+    end_date = dt.date.fromisoformat(args.end_date)
+
     log(f"\n{'=' * 70}\nMVP dataset build started {dt.datetime.now().isoformat()}\n{'=' * 70}")
 
     threshold = build_climatology_threshold()
@@ -141,26 +160,61 @@ def main() -> None:
     oni = indices.load_oni()
     rmm = indices.load_rmm()
 
-    init_dates = list(wednesdays_between(MVP_START, MVP_END))
-    log(f"Processing {len(init_dates)} Wednesday init dates from {MVP_START} to {MVP_END}")
+    years_needed = list(range(start_date.year, end_date.year + 2))
+    log(f"Preloading CPC verification data in memory for years {years_needed}...")
+    cpc_daily = cpc.load_years(years_needed).load()
+    cpc_weekly_all = cpc.weekly_totals(cpc_daily).compute()
+    log("CPC verification data preloaded into memory.")
+
+    init_dates = list(wednesdays_between(start_date, end_date))
+    if args.max_dates is not None:
+        init_dates = init_dates[:args.max_dates]
+
+    log(f"Processing {len(init_dates)} Wednesday init dates from {start_date} to {end_date} (workers={args.workers})")
 
     n_ok = n_skip = n_fail = 0
-    for i, init_date in enumerate(init_dates, 1):
-        try:
-            status = process_init_date(init_date, threshold, oni, rmm)
-        except Exception as exc:  # noqa: BLE001 - log and keep going
-            status = f"FAILED: {exc!r}"
-            log(f"[{i}/{len(init_dates)}] {init_date}: {status}")
-            log(traceback.format_exc())
-        else:
-            log(f"[{i}/{len(init_dates)}] {init_date}: {status}")
 
-        if status == "OK":
-            n_ok += 1
-        elif status.startswith("skipped"):
-            n_skip += 1
-        else:
-            n_fail += 1
+    if args.workers <= 1:
+        for i, init_date in enumerate(init_dates, 1):
+            try:
+                status = process_init_date(init_date, threshold, cpc_weekly_all, oni, rmm)
+            except Exception as exc:  # noqa: BLE001 - log and keep going
+                status = f"FAILED: {exc!r}"
+                log(f"[{i}/{len(init_dates)}] {init_date}: {status}")
+                log(traceback.format_exc())
+            else:
+                log(f"[{i}/{len(init_dates)}] {init_date}: {status}")
+
+            if status == "OK":
+                n_ok += 1
+            elif status.startswith("skipped"):
+                n_skip += 1
+            else:
+                n_fail += 1
+    else:
+        with ThreadPoolExecutor(max_workers=args.workers) as executor:
+            future_to_date = {
+                executor.submit(process_init_date, d, threshold, cpc_weekly_all, oni, rmm): (i, d)
+                for i, d in enumerate(init_dates, 1)
+            }
+            for future in as_completed(future_to_date):
+                i, init_date = future_to_date[future]
+                try:
+                    status = future.result()
+                except Exception as exc:  # noqa: BLE001
+                    status = f"FAILED: {exc!r}"
+                    log(f"[{i}/{len(init_dates)}] {init_date}: {status}")
+                    log(traceback.format_exc())
+                else:
+                    log(f"[{i}/{len(init_dates)}] {init_date}: {status}")
+
+                if status == "OK":
+                    n_ok += 1
+                elif status.startswith("skipped"):
+                    n_skip += 1
+                else:
+                    n_fail += 1
+
 
     log(f"\n{'=' * 70}\nDONE: {n_ok} built, {n_skip} skipped (already cached), "
         f"{n_fail} failed, out of {len(init_dates)} total\n{'=' * 70}")
@@ -171,3 +225,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

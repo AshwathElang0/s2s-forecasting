@@ -8,12 +8,31 @@ dependencies = [
     "cfgrib>=0.9.15.1",
     "dask>=2026.8.0",
     "eccodes>=2.48.0",
+    "eccodeslib>=2.48.0",
+    "eckitlib>=2.2.0",
     "fsspec>=2026.7.0",
+    "matplotlib>=3.8.0",
     "netcdf4>=1.7.4",
     "pandas>=3.0.5",
     "pydap>=3.5.10",
     "requests>=2.34.2",
     "s3fs>=2026.7.0",
+    "scikit-learn>=1.4.0",
+    "torch>=2.2.0",
     "xarray>=2026.7.0",
     "zarr>=3.3.0",
+]
+
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["s2s_data*", "s2s_models*"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
 ]
