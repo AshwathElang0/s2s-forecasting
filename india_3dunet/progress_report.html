@@ -461,9 +461,9 @@ predicted  = normal + gate × ecmwf_dev + correction</pre>
     <figcaption>Gate = 1: follow ECMWF's departure fully. Gate = 0: predict normal plus the correction. The gate should fall as ECMWF's accuracy fades with forecast day.</figcaption>
   </figure>
 
-  <p>We ran four versions. The three new ones use 672 training forecasts: 2004 has no earlier years of ECMWF forecasts to build its "normal" from, so it was dropped. The Baseline is the 724-forecast model from Experiment 1. Gate A, the plain head and the Baseline all get ECMWF rain as an ordinary input. In Gate B it can only reach the output through the gate.</p>
-  <h3>The four versions, written out</h3>
-  <p>Every quantity is per grid cell and per forecast day. Rain is handled as <code>log(1 + rain)</code>, so the "departures" below are departures in log-rain. All four use the same U-Net body; only the inputs, the target and the last layer differ.</p>
+  <p>We compare three versions. The two new ones use 672 training forecasts: 2004 has no earlier years of ECMWF forecasts to build its "normal" from, so it was dropped. The Baseline is the 724-forecast model from Experiment 1. All three get ECMWF rain as an ordinary input; the gate version also gets it a second time, through the gate.</p>
+  <h3>The three versions, written out</h3>
+  <p>Every quantity is per grid cell and per forecast day. Rain is handled as <code>log(1 + rain)</code>, so the "departures" below are departures in log-rain. All three use the same U-Net body; only the inputs, the target and the last layer differ.</p>
   <pre class="formula">obs        = log(1 + IMD observed rain)                      what we score against
 ecmwf      = log(1 + ECMWF rain, average of 11 members)
 normal     = average of obs for this day of year,  years before this one only
@@ -478,12 +478,11 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
       <tbody>
         <tr><td>1. Baseline</td><td>raw rain, rescaled to mean 0, spread 1</td><td>one map <code>r</code> = rescaled <code>obs</code></td><td><code>exp(r × spread + mean) − 1</code></td></tr>
         <tr><td>2. Departure from normal, no gate</td><td><code>ecmwf_dev</code> as an input channel</td><td>one map <code>d</code> ≈ <code>obs_dev</code></td><td><code>exp(normal + σ_obs × d) − 1</code></td></tr>
-        <tr><td>3. Gate A</td><td><code>ecmwf_dev</code> as an input channel <strong>and</strong> into the gate</td><td>two maps: <code>g</code>, <code>c</code>; <code>d = sigmoid(g) × ecmwf_dev + c</code> ≈ <code>obs_dev</code></td><td><code>exp(normal + σ_obs × d) − 1</code></td></tr>
-        <tr><td>4. Gate B</td><td>only into the gate (removed from the inputs)</td><td>same as Gate A</td><td><code>exp(normal + σ_obs × d) − 1</code></td></tr>
+        <tr><td>3. Gate</td><td><code>ecmwf_dev</code> as an input channel <strong>and</strong> into the gate</td><td>two maps: <code>g</code>, <code>c</code>; <code>d = sigmoid(g) × ecmwf_dev + c</code> ≈ <code>obs_dev</code></td><td><code>exp(normal + σ_obs × d) − 1</code></td></tr>
       </tbody>
     </table>
   </div>
-  <p>In versions 2–4 the normal is subtracted from the target before training and <strong>added back</strong> after the network runs, so the network only has to learn the departure. The loss (MSE + 1 − pattern correlation, Indian land cells only, all 32 forecast days) is computed on what the network outputs: rescaled log-rain for version 1, <code>obs_dev</code> for versions 2–4. The other 15 input channels (spread, humidity, winds, pressure, heights, SST, yesterday's rain, calendar) are the same in all four, except that in 2–4 yesterday's rain is also given as its departure from normal.</p>
+  <p>In versions 2 and 3 the normal is subtracted from the target before training and <strong>added back</strong> after the network runs, so the network only has to learn the departure. The loss (MSE + 1 − pattern correlation, Indian land cells only, all 32 forecast days) is computed on what the network outputs: rescaled log-rain for version 1, <code>obs_dev</code> for versions 2 and 3. The other 15 input channels (spread, humidity, winds, pressure, heights, SST, yesterday's rain, calendar) are the same in all four, except that in 2 and 3 yesterday's rain is also given as its departure from normal.</p>
   <figure>
     <div class="chart" id="c-exp3"></div>
     <figcaption>Pattern correlation with climatology removed, average over 32 forecast days, 153 test forecasts.</figcaption>
@@ -494,8 +493,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
       <tbody>
         <tr><td>Baseline (predicts rain directly)</td><td class="n">0.332</td><td class="n">0.545</td><td class="n">0.318</td><td class="n">0.216</td><td class="n">0.148</td><td class="n">6.37</td></tr>
         <tr><td>Departure from normal, no gate</td><td class="n">0.343</td><td class="n">0.561</td><td class="n">0.321</td><td class="n">0.211</td><td class="n">0.160</td><td class="n">6.34</td></tr>
-        <tr class="hl"><td>Gate A: departure + gate</td><td class="n">0.357</td><td class="n">0.565</td><td class="n">0.330</td><td class="n">0.229</td><td class="n">0.171</td><td class="n">6.41</td></tr>
-        <tr><td>Gate B: ECMWF rain only through gate</td><td class="n">0.334</td><td class="n">0.530</td><td class="n">0.306</td><td class="n">0.209</td><td class="n">0.149</td><td class="n">6.44</td></tr>
+        <tr class="hl"><td>Gate: departure + gate</td><td class="n">0.357</td><td class="n">0.565</td><td class="n">0.330</td><td class="n">0.229</td><td class="n">0.171</td><td class="n">6.41</td></tr>
       </tbody>
     </table>
   </div>
@@ -505,13 +503,12 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
       <thead><tr><th>Comparison</th><th class="n">Difference</th><th class="n">95% range</th><th>Clear?</th></tr></thead>
       <tbody>
         <tr><td>Departure from normal vs Baseline</td><td class="n">+0.011</td><td class="n">0.000 to +0.022</td><td>borderline</td></tr>
-        <tr><td>Adding the gate (Gate A vs no gate)</td><td class="n">+0.014</td><td class="n">+0.007 to +0.021</td><td>yes</td></tr>
-        <tr><td>Gate A vs Gate B</td><td class="n">+0.023</td><td class="n">+0.015 to +0.031</td><td>yes</td></tr>
+        <tr><td>Adding the gate (Gate vs no gate)</td><td class="n">+0.014</td><td class="n">+0.007 to +0.021</td><td>yes</td></tr>
       </tbody>
       <caption>Paired bootstrap over the 153 test forecasts, 10,000 resamples.</caption>
     </table>
   </div>
-  <p>The gain splits roughly in half between predicting the departure from normal and adding the gate. On RMSE all four versions are within 0.1 mm/day, which is within retraining noise. The gate improves where the wet and dry areas are placed, not the average size of the error.</p>
+  <p>The gain splits roughly in half between predicting the departure from normal and adding the gate. On RMSE all three versions are within 0.1 mm/day, which is within retraining noise. The gate improves where the wet and dry areas are placed, not the average size of the error.</p>
 
   <h3>The gate does not behave as designed</h3>
   <figure>
@@ -519,7 +516,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <div class="chart" id="c-gate"></div>
     <figcaption>Average gate value over Indian land by forecast day. The ideal is the measured correlation between ECMWF's departures and the observed departures on training data. Hover for values.</figcaption>
   </figure>
-  <p>In Gate A the gate stays near 0.15 on day 1 when it should be about 0.53. The network gets ECMWF rain through its ordinary inputs as well, so it relies on that route. When the ordinary route is removed (Gate B), the gate moves toward the ideal, but the overall score falls back to the Baseline level. The gate helps as a direct shortcut from ECMWF's forecast to the output, not as a readable "trust" value.</p>
+  <p>The gate stays near 0.15 on day 1 when it should be about 0.53. The network gets ECMWF rain through its ordinary inputs as well, so it relies on that route. The gate helps as a direct shortcut from ECMWF's forecast to the output, not as a readable "trust" value.</p>
   <p>Every run here was trained once, and the gaps are about twice the difference between two runs of the same setup. Repeating them with different random seeds is the first next step.</p>
 </section>
 
@@ -788,7 +785,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <table>
       <thead><tr><th>Step</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Repeat Baseline and Gate A with 2–3 random seeds</td><td>Every comparison so far rests on one training run</td></tr>
+        <tr><td>Repeat Baseline and the gate model with 2–3 random seeds</td><td>Every comparison so far rests on one training run</td></tr>
         <tr><td>Change the loss or back-transform to stop the flattening and the dry bias</td><td>Biggest known weakness; the review scatter plots show it clearly</td></tr>
         <tr><td>Quantile-mapping baseline</td><td>The standard simple method a new approach is expected to beat</td></tr>
         <tr><td>Tercile probability output (below / near / above normal)</td><td>Needed to compare with the <a href="https://doi.org/10.1007/s00382-026-08286-x">one published U-Net for Indian monsoon rainfall</a></td></tr>
@@ -960,7 +957,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     });
   }
 
-  const D = {"anom_corr": {"raw": [0.4364, 0.4252, 0.4397, 0.4308, 0.4077, 0.4004, 0.375, 0.31, 0.3078, 0.279, 0.2631, 0.2199, 0.1999, 0.1735, 0.1654, 0.1351, 0.1168, 0.1026, 0.0812, 0.1062, 0.0912, 0.053, 0.0414, 0.0077, 0.0296, 0.0333, 0.0569, 0.0317, 0.0449, 0.0341, 0.02, 0.029], "debiased": [0.4661, 0.4532, 0.4698, 0.4575, 0.4407, 0.4272, 0.4154, 0.3632, 0.3614, 0.3302, 0.3113, 0.2826, 0.2428, 0.2096, 0.2235, 0.1939, 0.1667, 0.1362, 0.1161, 0.1315, 0.1203, 0.099, 0.0779, 0.0467, 0.0713, 0.0764, 0.0928, 0.0595, 0.0829, 0.0596, 0.0552, 0.0573], "baseline": [0.5564, 0.6578, 0.6398, 0.6225, 0.6001, 0.56, 0.545, 0.4863, 0.4684, 0.4253, 0.4116, 0.38, 0.3546, 0.3175, 0.3142, 0.3013, 0.2498, 0.237, 0.2333, 0.2477, 0.2157, 0.1929, 0.1962, 0.1672, 0.1773, 0.169, 0.1853, 0.1484, 0.1474, 0.1495, 0.117, 0.1446]}, "gate": {"gateA": [0.1495, 0.0654, 0.0712, 0.0822, 0.0837, 0.0854, 0.0828, 0.0795, 0.0741, 0.0703, 0.0669, 0.0634, 0.0579, 0.0521, 0.0471, 0.0424, 0.0387, 0.0354, 0.0334, 0.0308, 0.029, 0.0262, 0.0243, 0.0215, 0.0204, 0.0191, 0.019, 0.0174, 0.0159, 0.0107, 0.0066, 0.0186], "gateB": [0.234, 0.1688, 0.1618, 0.1516, 0.1504, 0.1495, 0.145, 0.1354, 0.1283, 0.1231, 0.1203, 0.1126, 0.1053, 0.0933, 0.0841, 0.0734, 0.0671, 0.0605, 0.0561, 0.0506, 0.0482, 0.0462, 0.0447, 0.0418, 0.0405, 0.0392, 0.0374, 0.0342, 0.0327, 0.031, 0.0244, 0.0417]}};
+  const D = {"anom_corr": {"raw": [0.4364, 0.4252, 0.4397, 0.4308, 0.4077, 0.4004, 0.375, 0.31, 0.3078, 0.279, 0.2631, 0.2199, 0.1999, 0.1735, 0.1654, 0.1351, 0.1168, 0.1026, 0.0812, 0.1062, 0.0912, 0.053, 0.0414, 0.0077, 0.0296, 0.0333, 0.0569, 0.0317, 0.0449, 0.0341, 0.02, 0.029], "debiased": [0.4661, 0.4532, 0.4698, 0.4575, 0.4407, 0.4272, 0.4154, 0.3632, 0.3614, 0.3302, 0.3113, 0.2826, 0.2428, 0.2096, 0.2235, 0.1939, 0.1667, 0.1362, 0.1161, 0.1315, 0.1203, 0.099, 0.0779, 0.0467, 0.0713, 0.0764, 0.0928, 0.0595, 0.0829, 0.0596, 0.0552, 0.0573], "baseline": [0.5564, 0.6578, 0.6398, 0.6225, 0.6001, 0.56, 0.545, 0.4863, 0.4684, 0.4253, 0.4116, 0.38, 0.3546, 0.3175, 0.3142, 0.3013, 0.2498, 0.237, 0.2333, 0.2477, 0.2157, 0.1929, 0.1962, 0.1672, 0.1773, 0.169, 0.1853, 0.1484, 0.1474, 0.1495, 0.117, 0.1446]}, "gate": {"gateA": [0.1495, 0.0654, 0.0712, 0.0822, 0.0837, 0.0854, 0.0828, 0.0795, 0.0741, 0.0703, 0.0669, 0.0634, 0.0579, 0.0521, 0.0471, 0.0424, 0.0387, 0.0354, 0.0334, 0.0308, 0.029, 0.0262, 0.0243, 0.0215, 0.0204, 0.0191, 0.019, 0.0174, 0.0159, 0.0107, 0.0066, 0.0186]}};
 
   barChart("c-exp1", {
     label: "Day-1 pattern correlation for models trained on 60, 250 and 724 forecasts: 0.416, 0.470, 0.553.",
@@ -985,24 +982,22 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
   });
 
   barChart("c-exp3", {
-    label: "Average correlation with climatology removed: Baseline 0.332, departure no gate 0.343, Gate A 0.357, Gate B 0.334.",
+    label: "Average correlation with climatology removed: Baseline 0.332, departure no gate 0.343, gate 0.357.",
     xMax: 0.4, ticks: [0, 0.1, 0.2, 0.3, 0.4],
     rows: [
       { label: "Baseline", value: 0.332, color: "var(--s1)" },
       { label: "Departure from normal, no gate", value: 0.343, color: "var(--s3)" },
-      { label: "Gate A", value: 0.357, color: "var(--s2)" },
-      { label: "Gate B", value: 0.334, color: "var(--s4)" }
+      { label: "Gate", value: 0.357, color: "var(--s2)" }
     ]
   });
 
   const gateSeries = [
-    { name: "Gate A", color: "var(--s2)", values: D.gate.gateA },
-    { name: "Gate B", color: "var(--s4)", values: D.gate.gateB }
+    { name: "Learned gate", color: "var(--s2)", values: D.gate.gateA }
   ];
   const ideal = { name: "Ideal gate", color: "var(--ink)", pts: [[1, 0.534], [2, 0.528], [4, 0.485], [7, 0.470], [14, 0.242], [21, 0.111], [28, 0.071], [32, 0.044]] };
   legend("lg-gate", gateSeries.concat([{ name: "Ideal gate (measured)", color: "var(--ink)", dot: true }]));
   lineChart("c-gate", {
-    label: "Learned gate by forecast day. Gate A stays near 0.1, Gate B near 0.15 to 0.23, while the ideal falls from 0.53 at day 1 to 0.04 at day 32.",
+    label: "Learned gate by forecast day. The learned gate stays near 0.1, while the ideal falls from 0.53 at day 1 to 0.04 at day 32.",
     yMin: 0, yMax: 0.6, yTicks: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6],
     series: gateSeries, points: [ideal]
   });
