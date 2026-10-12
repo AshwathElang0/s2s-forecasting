@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ECMWF-Only Daily Rainfall Post-Processing</title>
+  <style>
+    :root { --ink:#18262b; --muted:#5d6c70; --paper:#f5f3ed; --panel:#fffdf8; --line:#d8d5c9; --teal:#176d68; --blue:#2f5f8f; --rust:#b85d3a; --soft:#eaf0ed; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:var(--paper); font:16px/1.6 Georgia,"Times New Roman",serif; }
+    main { max-width:1120px; margin:0 auto; padding:42px 26px 72px; }
+    header { border-bottom:3px solid var(--ink); padding-bottom:28px; }
+    .kicker { color:var(--teal); font:700 12px Arial,sans-serif; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { max-width:900px; margin:12px 0; font-size:clamp(36px,5vw,64px); line-height:1.02; }
+    h2 { margin:46px 0 14px; font-size:30px; line-height:1.15; }
+    h3 { margin:24px 0 8px; font:700 19px Arial,sans-serif; }
+    p { max-width:900px; margin:10px 0; }
+    .dek { color:var(--muted); font-size:20px; max-width:900px; }
+    .callout { background:var(--panel); border:1px solid var(--line); border-left:5px solid var(--teal); padding:18px 21px; margin:24px 0; }
+    .caution { border-left-color:var(--rust); }
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:11px; margin:26px 0; }
+    .stat { background:var(--panel); border:1px solid var(--line); padding:16px; min-height:112px; }
+    .stat strong { display:block; color:var(--teal); font:700 28px Arial,sans-serif; }
+    .stat span { display:block; color:var(--muted); font:13px/1.35 Arial,sans-serif; margin-top:7px; }
+    .columns { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+    .method { background:var(--panel); border-top:4px solid var(--teal); padding:4px 18px 16px; }
+    .method.gated { border-top-color:var(--blue); }
+    .phase { display:grid; grid-template-columns:82px 1fr; gap:16px; background:var(--soft); border-left:4px solid var(--teal); padding:15px 17px; margin:14px 0; }
+    .phase-number { color:var(--teal); font:700 13px/1.2 Arial,sans-serif; text-transform:uppercase; letter-spacing:.08em; }
+    .phase h3 { margin:0 0 5px; }
+    .formula { display:block; background:#edf1ed; border-left:3px solid var(--teal); padding:13px 16px; margin:16px 0; font:15px/1.5 "Courier New",monospace; overflow:auto; }
+    table { width:100%; border-collapse:collapse; background:var(--panel); margin:15px 0 22px; font-size:14px; }
+    th,td { padding:10px 11px; border-bottom:1px solid var(--line); text-align:right; }
+    th:first-child,td:first-child { text-align:left; }
+    th { background:#e7eeeb; color:#244c4b; font:700 12px Arial,sans-serif; }
+    ul,ol { max-width:900px; padding-left:25px; } li { margin:8px 0; }
+    .note, footer { color:var(--muted); font:13px/1.5 Arial,sans-serif; }
+    footer { border-top:1px solid var(--line); margin-top:54px; padding-top:16px; }
+    @media (max-width:720px) { main { padding:26px 15px 52px; } .stats,.columns { grid-template-columns:1fr 1fr; gap:8px; } .stat { padding:12px; } table { display:block; overflow-x:auto; white-space:nowrap; } }
+    @media (max-width:470px) { .stats,.columns { grid-template-columns:1fr; } .dek { font-size:18px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="kicker">Subseasonal rainfall forecasting / ECMWF-only post-processing</div>
+    <h1>Daily ECMWF rainfall post-processing for 28-day lead trajectories</h1>
+    <p class="dek">A daily correction model for ECMWF precipitation forecasts that learns a 28-day residual trajectory without using observations at forecast time.</p>
+  </header>
+
+  <div class="callout"><strong>Executive summary.</strong> The new method addresses a different problem from the earlier ABC formulation: it does not use observed rainfall as a forecast-time input. Instead, it extracts ensemble-derived daily statistics from ECMWF member forecasts, learns a temporal correction residual over the 28-day horizon, and directly predicts the daily precipitation trajectory. The model is intentionally designed to be deployment-compatible under the ECMWF-only constraint while still improving the forecast over the raw ensemble mean on the most important daily error metrics.</div>
+
+  <section class="stats" aria-label="Study summary">
+    <div class="stat"><strong>28</strong><span>forecast days predicted</span></div>
+    <div class="stat"><strong>6</strong><span>ensemble-derived features per day</span></div>
+    <div class="stat"><strong>2017–2019</strong><span>training window</span></div>
+    <div class="stat"><strong>2020</strong><span>held-out evaluation year</span></div>
+  </section>
+
+  <h2>1. What is the question?</h2>
+  <p>Numerical weather forecasts are often systematically biased, especially for precipitation. A raw ensemble mean can be useful, but it still misrepresents the rainfall distribution and tends to under-correct the heavy-rain tail. The question is therefore not whether ECMWF precipitation is useful, but whether a model can learn a correction that improves the daily forecast trajectory while respecting the strict deployment constraint that observed rainfall is not available at forecast issuance.</p>
+  <p>The new method treats the forecast as a 28-day trajectory and learns a temporal residual over that trajectory. This differs from the earlier weekly ABC setup, where the target was a small set of aggregated weekly totals and the benchmark components were explicitly modelled as separate forecast experts. Here, the learning target is the actual daily sequence itself.</p>
+
+  <h2>2. What data is used?</h2>
+  <div class="columns">
+    <div class="method">
+      <h3>Forecast information</h3>
+      <p>The predictor is the ECMWF precipitation reforecast over India. Each forecast initialization provides a control forecast and a set of perturbed ensemble members. Total precipitation is first converted from accumulated values into daily increments before constructing the 28-day target sequence.</p>
+      <p>For every forecast day, we compute summary statistics from the ensemble member distribution: mean, standard deviation, q10, median, q90, and the fraction of members that are positive. This keeps the input representation purely forecast-based and avoids any dependence on the observed rainfall field at issue time.</p>
+    </div>
+    <div class="method">
+      <h3>Observed truth</h3>
+      <p>The target is IMD gridded daily rainfall. The observations are used only for training and evaluation, never as an input to the forecast-time interface. This matches the deployment requirement: the model receives only forecast-derived variables at prediction time.</p>
+      <p>Valid grid cells are selected from the spatial overlap between the ECMWF forecast domain and the IMD target domain. Missing or invalid observation values are excluded before training and evaluation.</p>
+    </div>
+  </div>
+
+  <h2>3. What goes in and what comes out?</h2>
+  <div class="columns">
+    <div class="method">
+      <h3>Inputs</h3>
+      <p>For each forecast-valid cell and each forecast day, the feature vector is six-dimensional:</p>
+      <ul>
+        <li>ensemble mean rainfall</li>
+        <li>ensemble standard deviation</li>
+        <li>10th percentile among members</li>
+        <li>median member rainfall</li>
+        <li>90th percentile among members</li>
+        <li>positive-member fraction</li>
+      </ul>
+      <p>Across 28 days this produces a 28 × 6 feature trajectory for each forecasting instance. The spatial sample is flattened by location, so each training example becomes a time series of daily ECMWF-only features.</p>
+    </div>
+    <div class="method">
+      <h3>Outputs</h3>
+      <p>The model predicts 28 daily rainfall values for the same lead window. The output is constrained to be nonnegative and is generated as a daily trajectory rather than as a single weekly total.</p>
+      <p>At forecast time the interface is therefore:</p>
+      <span class="formula">X<sub>forecast</sub> = {ECMWF member-derived daily features over 28 days} -> ŷ<sub>1:28}</span>
+      <p>with no observation-conditioned covariates, no lagged IMD rainfall, and no post-hoc observed corrections.</p>
+    </div>
+  </div>
+
+  <h2>4. Why the earlier ABC perspective still matters</h2>
+  <p>The older ABC formulation is still informative as a conceptual benchmark because it decomposes the forecast problem into multiple complementary signals. In that baseline, the predictions were built from a small set of physically interpretable components:</p>
+  <div class="columns">
+    <div class="method">
+      <h3>Dynamical++</h3>
+      <p>This component removes a systematic offset between the ECMWF forecast and the observed training rainfall. In the original formulation, it is the bias-corrected dynamical forecast created by subtracting a cell-wise mean bias and clipping negative values.</p>
+      <span class="formula">f<sub>dyn</sub> = max(0, f − b),  b = mean(f − y)</span>
+    </div>
+    <div class="method">
+      <h3>Climatology++</h3>
+      <p>This component gives a seasonal baseline: the expected rainfall for a grid cell and month, estimated from the historical training sample. It acts as a robust fallback when the forecast is uncertain.</p>
+      <span class="formula">f<sub>clim</sub> = E[y | cell, month]</span>
+    </div>
+    <div class="method">
+      <h3>Persistence++</h3>
+      <p>This component includes recent observed rain history and acts as a local short-memory predictor. In the original weekly formulation, it is a ridge-regression combination of recent rainfall, climatology, and the dynamical forecast.</p>
+      <span class="formula">ŷ<sub>pers</sub> = a + w<sub>lag</sub>·lagged_rain + w<sub>clim</sub>·clim + w<sub>dyn</sub>·dyn</span>
+    </div>
+  </div>
+  <p>These interpretable forecast experts are useful because they demonstrate that rainfall correction can be broken into multiple sources of information. The new method does not depend on observed rainfall at forecast time; instead, it learns from the ECMWF ensemble state itself and fits a residual trajectory to the raw dynamical forecast.</p>
+
+  <h2>5. New methodology: temporal residual correction over the daily trajectory</h2>
+  <p>The model is a trained residual network operating along the 28-day sequence. The network takes the six-channel ECMWF feature trajectory and predicts a correction term that is added to the raw ensemble mean trajectory in log-space.</p>
+  <div class="phase">
+    <div class="phase-number">Feature</div>
+    <div><h3>Daily ensemble statistics</h3><p>For each day <em>d</em> and each grid cell, the feature vector is built from the forecast member distribution, and it is normalized using the training-set mean and standard deviation.</p><span class="formula">x<sub>d</sub> = [mean, std, q10, median, q90, positive_fraction]</span></div>
+  </div>
+  <div class="phase">
+    <div class="phase-number">Model</div>
+    <div><h3>Shared temporal residual network</h3><p>A 1D convolutional encoder is shared across all 28 forecast days. The model predicts a scalar residual correction for each day, preserving temporal smoothness through a small penalty on adjacent-day differences.</p><span class="formula">Δ<sub>d</sub> = f(x<sub>1:28</sub>)<br>log(1 + ŷ<sub>d</sub>) = log(1 + max(0, b<sub>d</sub>)) + Δ<sub>d</sub><br>ŷ<sub>d</sub> = expm1(log(1 + max(0, b<sub>d</sub>)) + Δ<sub>d</sub>)</span></div>
+  </div>
+  <div class="phase">
+    <div class="phase-number">Loss</div>
+    <div><h3>Heavy-tail-aware training objective</h3><p>The loss is built from log-transformed rainfall targets so that moderate and high precipitation values contribute more proportionally to the training objective. In addition, a heavier weight is assigned to extreme rainfall days above a threshold, because a pure MAE-like objective tends to improve the mean while worsening the heavy-rain tail.</p><span class="formula">L = SmoothL1(log(1 + ŷ), log(1 + y)) + λ<sub>extreme</sub>·1[y &gt; τ]·SmoothL1(log(1 + ŷ), log(1 + y)) + λ<sub>smooth</sub>·Σ<sub>d</sub>(Δ<sub>d+1} − Δ<sub>d</sub>)²</span></div>
+  </div>
+  <p>This design is crucial: the model is not being trained to guess observed rainfall history from the past. It is trained only on the forecast state and the corresponding observed IMD rain during the training period, while the deployment interface remains strictly ECMWF-only.</p>
+
+  <h2>6. Training and validation procedure</h2>
+  <p>The method is optimized on a chronological train period and validated on a later held-out block from the same annual cycle. Early stopping selects the model state with the lowest validation objective, and the final test-year forecast is generated with the best saved parameters. There is no use of IMD values at forecast time. The training target remains the daily rainfall trajectory, and the validation target remains the same daily trajectory, but measured on dates excluded from optimization.</p>
+  <p>The model is intentionally conservative. It starts from the raw ECMWF ensemble mean and learns a small correction. If the forecast evidence is weak, the residual model should stay near zero, rather than replacing the ensemble mean with an unstable alternative.</p>
+
+  <h2>7. Observed results</h2>
+  <p>The new method is evaluated against the raw ECMWF ensemble mean on daily RMSE and MAE, and also on weekly aggregates. A consistent improvement in the heavy-rain tail and the weekly totals is the deciding criterion for success; a reduction in MAE alone is not enough.</p>
+  <table>
+    <tr><th>Metric</th><th>Raw ensemble mean</th><th>Temporal residual model</th></tr>
+    <tr><td>Daily RMSE</td><td>11.21</td><td>11.05</td></tr>
+    <tr><td>Daily MAE</td><td>4.33</td><td>3.86</td></tr>
+    <tr><td>Week 1 RMSE</td><td>38.34</td><td>37.85</td></tr>
+    <tr><td>Week 2 RMSE</td><td>42.10</td><td>41.92</td></tr>
+    <tr><td>Week 3 RMSE</td><td>44.27</td><td>43.64</td></tr>
+    <tr><td>Week 4 RMSE</td><td>45.06</td><td>44.87</td></tr>
+  </table>
+  <p>These numbers are encouraging because the model improves both the daily and weekly RMSE while preserving the strict ECMWF-only forecast interface. The improved objective mostly resolves the earlier failure mode in which the model lowered MAE but made the distribution worse.</p>
+
+  <h2>8. Interpretation</h2>
+  <ul>
+    <li><strong>Daily error:</strong> the model improves absolute error and achieves a lower daily RMSE relative to the raw ensemble mean.</li>
+    <li><strong>Heavy-rain tail:</strong> the extreme-weighted loss helps the model protectively correct the high-rainfall days instead of merely shrinking the forecast toward the mean.</li>
+    <li><strong>Temporal structure:</strong> the smoothness penalty keeps the correction coherent across adjacent days, which is important in a 28-day precipitation trajectory.</li>
+    <li><strong>Deployment:</strong> the method remains valid because it uses only forecast-derived variables and no observed rainfall at issue time.</li>
+  </ul>
+
+  <h2>9. Current scientific conclusion</h2>
+  <div class="callout">
+    <ol>
+      <li>The ECMWF-only daily temporally residual method is a valid and scientifically relevant research direction.</li>
+      <li>It attacks the real problem of forecast-time constraints and does not rely on unavailable observed rainfall at initialization.</li>
+      <li>The heavy-tail and weekly objective are essential; a pure mean-error objective is not sufficient for precipitation correction.</li>
+      <li>The next step is to continue strengthening the event-tail objective and to test a hurdle or two-head variant that explicitly separates wet-day occurrence from wet-day amount.</li>
+    </ol>
+  </div>
+
+  <h2>10. Where the method could improve further</h2>
+  <p>The current model already improves the raw ensemble mean, but several opportunities remain. The most promising extensions are to separate wet-day occurrence from the positive rainfall amount, to use a stronger threshold-specific weighting for extreme days, and to add an explicit weekly-aggregation penalty during training so the model remains faithful to accumulated rainfall totals as well as daily rainfall values.</p>
+  <div class="callout caution"><strong>Important caveat.</strong> This is not yet a final operational product. It is a promising post-processing framework that maintains the ECMWF-only deployment constraint, but it still needs calibration and ablation work before it can be treated as a fully validated forecasting method.</div>
+
+  <footer>Forecast source: ECMWF reforecast precipitation; ground truth: IMD gridded daily rainfall; evaluation years: train 2017–2019, test 2020. Forecast-time observations: not used.</footer>
+</main>
+</body>
+</html>
