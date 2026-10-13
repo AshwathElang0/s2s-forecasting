@@ -186,7 +186,7 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
   <ul>
     <li>The model beats raw ECMWF and bias-corrected ECMWF at every forecast day.</li>
     <li>The standard score overstates skill. A forecast that just predicts the long-term average beats raw ECMWF on it, so we also score with the average removed.</li>
-    <li>Predicting the <em>departure from normal</em>, with a small "trust gate", gave the best single run so far: +0.025 correlation over the baseline. That is within retraining noise and is being checked with more seeds.</li>
+    <li>Predicting the <em>departure from normal</em> instead of rain directly gives a real gain: +0.027 correlation with climatology removed, confirmed over 3 training runs each. Adding a "trust gate" on top adds nothing.</li>
     <li>The model's rainfall maps are too flat: they carry about half the real variability.</li>
     <li>12 of the 17 inputs add nothing measurable, and neither does the day-of-year input (3 seeds each).</li>
   </ul>
@@ -461,7 +461,7 @@ predicted  = normal + gate × ecmwf_dev + correction</pre>
     <figcaption>Gate = 1: follow ECMWF's departure fully. Gate = 0: predict normal plus the correction. The gate should fall as ECMWF's accuracy fades with forecast day.</figcaption>
   </figure>
 
-  <p>We compare three versions. The two new ones use 672 training forecasts: 2004 has no earlier years of ECMWF forecasts to build its "normal" from, so it was dropped. The Baseline is the 724-forecast model from Experiment 1. All three get ECMWF rain as an ordinary input; the gate version also gets it a second time, through the gate.</p>
+  <p>We compare three versions. The two new ones use 672 training forecasts: 2004 has no earlier years of ECMWF forecasts to build its "normal" from, so it was dropped. The Baseline is the 724-forecast, 17-input model (Experiment 5). All three get ECMWF rain as an ordinary input; the gate version also gets it a second time, through the gate.</p>
   <h3>The three versions, written out</h3>
   <p>Every quantity is per grid cell and per forecast day. Rain is handled as <code>log(1 + rain)</code>, so the "departures" below are departures in log-rain. All three use the same U-Net body; only the inputs, the target and the last layer differ.</p>
   <pre class="formula">obs        = log(1 + IMD observed rain)                      what we score against
@@ -482,33 +482,35 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
       </tbody>
     </table>
   </div>
-  <p>In versions 2 and 3 the normal is subtracted from the target before training and <strong>added back</strong> after the network runs, so the network only has to learn the departure. The loss (MSE + 1 − pattern correlation, Indian land cells only, all 32 forecast days) is computed on what the network outputs: rescaled log-rain for version 1, <code>obs_dev</code> for versions 2 and 3. The other 15 input channels (spread, humidity, winds, pressure, heights, SST, yesterday's rain, calendar) are the same in all four, except that in 2 and 3 yesterday's rain is also given as its departure from normal.</p>
+  <p>In versions 2 and 3 the normal is subtracted from the target before training and <strong>added back</strong> after the network runs, so the network only has to learn the departure. The loss (MSE + 1 − pattern correlation, Indian land cells only, all 32 forecast days) is computed on what the network outputs: rescaled log-rain for version 1, <code>obs_dev</code> for versions 2 and 3. The other 15 input channels (spread, humidity, winds, pressure, heights, SST, yesterday's rain, calendar) are the same in all three, except that in 2 and 3 yesterday's rain is also given as its departure from normal.</p>
   <figure>
     <div class="chart" id="c-exp3"></div>
-    <figcaption>Pattern correlation with climatology removed, average over 32 forecast days, 153 test forecasts.</figcaption>
+    <figcaption>Pattern correlation with climatology removed, average over 32 forecast days and over 3 training runs (seeds 0, 1, 2), 153 test forecasts.</figcaption>
   </figure>
+  <p>Each version was trained <strong>three times</strong> with different random seeds. The Baseline here is the 17-input model from Experiment 5, which has the same inputs as the other two.</p>
   <div class="scroll">
     <table>
-      <thead><tr><th>Version</th><th class="n">Corr, clim. removed</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th><th class="n">RMSE, mm/day</th></tr></thead>
+      <thead><tr><th>Version</th><th class="n">Corr, clim. removed</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th><th class="n">Corr, standard</th><th class="n">RMSE, mm/day</th></tr></thead>
       <tbody>
-        <tr><td>Baseline (predicts rain directly)</td><td class="n">0.332</td><td class="n">0.545</td><td class="n">0.318</td><td class="n">0.216</td><td class="n">0.148</td><td class="n">6.37</td></tr>
-        <tr><td>Departure from normal, no gate</td><td class="n">0.343</td><td class="n">0.561</td><td class="n">0.321</td><td class="n">0.211</td><td class="n">0.160</td><td class="n">6.34</td></tr>
-        <tr class="hl"><td>Gate: departure + gate</td><td class="n">0.357</td><td class="n">0.565</td><td class="n">0.330</td><td class="n">0.229</td><td class="n">0.171</td><td class="n">6.41</td></tr>
+        <tr><td>Baseline (predicts rain directly)</td><td class="n">0.322 (0.313–0.329)</td><td class="n">0.543</td><td class="n">0.314</td><td class="n">0.199</td><td class="n">0.125</td><td class="n">0.443</td><td class="n">6.39</td></tr>
+        <tr class="hl"><td>Departure from normal, no gate</td><td class="n">0.348 (0.343–0.351)</td><td class="n">0.560</td><td class="n">0.319</td><td class="n">0.221</td><td class="n">0.166</td><td class="n">0.442</td><td class="n">6.40</td></tr>
+        <tr><td>Gate: departure + gate</td><td class="n">0.350 (0.344–0.357)</td><td class="n">0.564</td><td class="n">0.331</td><td class="n">0.220</td><td class="n">0.169</td><td class="n">0.443</td><td class="n">6.41</td></tr>
       </tbody>
+      <caption>Mean of 3 seeds; brackets give the lowest and highest seed. Day columns are climatology-removed correlation.</caption>
     </table>
   </div>
   <h3>Which part helped?</h3>
   <div class="scroll">
     <table>
-      <thead><tr><th>Comparison</th><th class="n">Difference</th><th class="n">95% range</th><th>Clear?</th></tr></thead>
+      <thead><tr><th>Comparison</th><th class="n">Difference</th><th class="n">95% range</th><th>Seeds overlap?</th><th>Real?</th></tr></thead>
       <tbody>
-        <tr><td>Departure from normal vs Baseline</td><td class="n">+0.011</td><td class="n">0.000 to +0.022</td><td>borderline</td></tr>
-        <tr><td>Adding the gate (Gate vs no gate)</td><td class="n">+0.014</td><td class="n">+0.007 to +0.021</td><td>yes</td></tr>
+        <tr class="hl"><td>Departure from normal vs Baseline</td><td class="n">+0.027</td><td class="n">+0.016 to +0.038</td><td>no</td><td>yes</td></tr>
+        <tr><td>Adding the gate (Gate vs no gate)</td><td class="n">+0.001</td><td class="n">−0.002 to +0.005</td><td>yes</td><td>no</td></tr>
       </tbody>
-      <caption>Paired bootstrap over the 153 test forecasts, 10,000 resamples. "Clear" covers only which test forecasts were drawn, not retraining noise (see Experiment 7).</caption>
+      <caption>Climatology-removed correlation. Paired bootstrap over the 153 test forecasts on 3-seed averages, 10,000 resamples.</caption>
     </table>
   </div>
-  <p>The gain splits roughly in half between predicting the departure from normal and adding the gate. On RMSE all three versions are within 0.1 mm/day, which is within retraining noise. The gate improves where the wet and dry areas are placed, not the average size of the error.</p>
+  <p><strong>Predicting the departure from normal is a real gain: +0.027.</strong> All three of its runs (0.343–0.351) beat all three Baseline runs (0.313–0.329), and the gain grows with forecast day (+0.04 at day 28). It does this with fewer training forecasts (672 vs 724). <strong>The gate adds nothing on top.</strong> The single-run result that credited the gate with +0.014 was a lucky seed. On the standard score and RMSE all three are the same, so the gain is in placing wetter- and drier-than-normal areas, not in the overall map or the size of the error.</p>
 
   <h3>The gate does not behave as designed</h3>
   <figure>
@@ -517,7 +519,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <figcaption>Average gate value over Indian land by forecast day. The ideal is the measured correlation between ECMWF's departures and the observed departures on training data. Hover for values.</figcaption>
   </figure>
   <p>The gate stays near 0.15 on day 1 when it should be about 0.53. The network gets ECMWF rain through its ordinary inputs as well, so it relies on that route. The gate helps as a direct shortcut from ECMWF's forecast to the output, not as a readable "trust" value.</p>
-  <p>Every run here was trained once. Experiment 7 later measured how much the climatology-removed score moves between retrainings of the same setup: up to 0.016. The +0.011 and +0.014 gains above are smaller than that, so they are not established until repeated with more seeds.</p>
+  <p>The first version of this experiment trained each model once and credited the gain roughly half to the departure from normal and half to the gate. Repeating with three seeds changed that: the departure from normal carries all of it.</p>
 </section>
 
 <section id="exp4">
@@ -629,7 +631,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
       </tbody>
     </table>
   </div>
-  <p>Earlier experiments assumed a retraining noise of about 0.006, from one accidental repeat on the standard score. With climatology removed it is closer to 0.016. Large results stand: beating raw and debiased ECMWF (gap 0.11), the flat predictions, and more data helping. Small single-run gains on the climatology-removed score — departure from normal (+0.011), the gate (+0.014), yesterday's rain (+0.011) — are within this noise and are not established. A difference should count only if it is bigger than both the bootstrap range and the seed spread.</p>
+  <p>Earlier experiments assumed a retraining noise of about 0.006, from one accidental repeat on the standard score. With climatology removed it is closer to 0.016. Large results stand: beating raw and debiased ECMWF (gap 0.11), the flat predictions, and more data helping. Small single-run gains on the climatology-removed score need repeating. Doing that for Experiment 3 showed the departure from normal is real (+0.027 over 3 seeds) and the gate is not (+0.001). Yesterday's rain (+0.011, Experiment 6) has not been repeated. A difference should count only if it is bigger than both the bootstrap range and the seed spread.</p>
 </section>
 
 <section id="review">
@@ -809,7 +811,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
   <ol>
     <li>The model beats raw and debiased ECMWF at every forecast day. Its real skill, with climatology removed, is 0.33 averaged over 32 days: 0.55 at day 1, 0.15 at day 28.</li>
     <li>The standard score overstates skill, because climatology alone beats raw ECMWF on it.</li>
-    <li>Predicting the departure from normal with a gate is the best single run so far (0.357 vs 0.332), but the gap is within retraining noise.</li>
+    <li>Predicting the departure from normal is the best version: 0.348 vs 0.322 with climatology removed, over 3 seeds each. The gate adds nothing on top (0.350).</li>
     <li>Predictions are about half as variable as reality.</li>
     <li>Adding the 12 atmospheric inputs (humidity, winds, pressure, heights, SST) to the base five does not improve the score. Removing yesterday's observed rain changes little: no effect on the standard score, a small unconfirmed gain with climatology removed.</li>
       <li>Yesterday's observed rain is no longer an input, because it would not be available in real time. The review plots show the model overfits after about epoch 7, runs 1.2–1.7 mm/day too dry, and is worse than raw ECMWF at the all-India weekly amount even though it is better on the spatial pattern.</li>
@@ -838,7 +840,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <table>
       <thead><tr><th>Step</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Repeat Baseline, departure-from-normal and the gate model with 3 seeds</td><td>Their gains are within retraining noise (Experiment 7). Running now.</td></tr>
+        <tr><td>Make departure from normal the main model</td><td>The one change confirmed over 3 seeds (Experiment 3)</td></tr>
         <tr><td>Change the loss or back-transform to stop the flattening and the dry bias</td><td>Biggest known weakness; the review scatter plots show it clearly</td></tr>
         <tr><td>Quantile-mapping baseline</td><td>The standard simple method a new approach is expected to beat</td></tr>
         <tr><td>Tercile probability output (below / near / above normal)</td><td>Needed to compare with the <a href="https://doi.org/10.1007/s00382-026-08286-x">one published U-Net for Indian monsoon rainfall</a></td></tr>
@@ -1035,12 +1037,12 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
   });
 
   barChart("c-exp3", {
-    label: "Average correlation with climatology removed: Baseline 0.332, departure no gate 0.343, gate 0.357.",
+    label: "Average correlation with climatology removed, mean of 3 seeds: Baseline 0.322, departure no gate 0.348, gate 0.350.",
     xMax: 0.4, ticks: [0, 0.1, 0.2, 0.3, 0.4],
     rows: [
-      { label: "Baseline", value: 0.332, color: "var(--s1)" },
-      { label: "Departure from normal, no gate", value: 0.343, color: "var(--s3)" },
-      { label: "Gate", value: 0.357, color: "var(--s2)" }
+      { label: "Baseline", value: 0.322, color: "var(--s1)" },
+      { label: "Departure from normal, no gate", value: 0.348, color: "var(--s3)" },
+      { label: "Gate", value: 0.350, color: "var(--s2)" }
     ]
   });
 
