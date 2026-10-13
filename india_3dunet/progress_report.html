@@ -186,9 +186,9 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
   <ul>
     <li>The model beats raw ECMWF and bias-corrected ECMWF at every forecast day.</li>
     <li>The standard score overstates skill. A forecast that just predicts the long-term average beats raw ECMWF on it, so we also score with the average removed.</li>
-    <li>Predicting the <em>departure from normal</em>, with a small "trust gate", gives the best result so far: +0.025 correlation over the baseline.</li>
+    <li>Predicting the <em>departure from normal</em>, with a small "trust gate", gave the best single run so far: +0.025 correlation over the baseline. That is within retraining noise and is being checked with more seeds.</li>
     <li>The model's rainfall maps are too flat: they carry about half the real variability.</li>
-    <li>12 of the 17 inputs add nothing measurable.</li>
+    <li>12 of the 17 inputs add nothing measurable, and neither does the day-of-year input (3 seeds each).</li>
   </ul>
 </section>
 
@@ -505,7 +505,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
         <tr><td>Departure from normal vs Baseline</td><td class="n">+0.011</td><td class="n">0.000 to +0.022</td><td>borderline</td></tr>
         <tr><td>Adding the gate (Gate vs no gate)</td><td class="n">+0.014</td><td class="n">+0.007 to +0.021</td><td>yes</td></tr>
       </tbody>
-      <caption>Paired bootstrap over the 153 test forecasts, 10,000 resamples.</caption>
+      <caption>Paired bootstrap over the 153 test forecasts, 10,000 resamples. "Clear" covers only which test forecasts were drawn, not retraining noise (see Experiment 7).</caption>
     </table>
   </div>
   <p>The gain splits roughly in half between predicting the departure from normal and adding the gate. On RMSE all three versions are within 0.1 mm/day, which is within retraining noise. The gate improves where the wet and dry areas are placed, not the average size of the error.</p>
@@ -517,7 +517,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <figcaption>Average gate value over Indian land by forecast day. The ideal is the measured correlation between ECMWF's departures and the observed departures on training data. Hover for values.</figcaption>
   </figure>
   <p>The gate stays near 0.15 on day 1 when it should be about 0.53. The network gets ECMWF rain through its ordinary inputs as well, so it relies on that route. The gate helps as a direct shortcut from ECMWF's forecast to the output, not as a readable "trust" value.</p>
-  <p>Every run here was trained once, and the gaps are about twice the difference between two runs of the same setup. Repeating them with different random seeds is the first next step.</p>
+  <p>Every run here was trained once. Experiment 7 later measured how much the climatology-removed score moves between retrainings of the same setup: up to 0.016. The +0.011 and +0.014 gains above are smaller than that, so they are not established until repeated with more seeds.</p>
 </section>
 
 <section id="exp4">
@@ -574,10 +574,62 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
         <tr class="hl"><td>Corr, clim. removed</td><td>1–32</td><td class="n">0.329</td><td class="n">0.317</td><td class="n">+0.011</td><td>yes</td></tr>
         <tr><td>RMSE, mm/day</td><td>1–32</td><td class="n">6.47</td><td class="n">6.36</td><td class="n">+0.12</td><td>within retraining noise</td></tr>
       </tbody>
-      <caption>Paired bootstrap over the 153 test forecasts. The RMSE gap matches the 0.11 mm/day difference between two training runs of the identical setup.</caption>
+      <caption>Paired bootstrap over the 153 test forecasts. "Clear" covers only which test forecasts were drawn, not retraining noise (see Experiment 7). The RMSE gap matches the 0.11 mm/day difference between two training runs of the identical setup.</caption>
     </table>
   </div>
-  <p>It makes no difference on the standard score. With climatology removed it helps slightly, but only at weeks 3–5, not in the first days where it would be expected to matter most. The effect is small and rests on one run each, so it is not established yet.</p>
+  <p>It makes no difference on the standard score. With climatology removed it helps slightly, but only at weeks 3–5, not in the first days where it would be expected to matter most. The effect is small and rests on one run each. Experiment 7 found that retraining alone moves this score by up to 0.016, so the +0.011 is within noise.</p>
+</section>
+
+<section id="exp7">
+  <p class="eyebrow">Experiment 7</p>
+  <h2>Does the day-of-year input help? Three seeds each</h2>
+  <p>The reference paper gives its network only ECMWF forecasts. We also give it the day of the year (sin and cos, two channels). To see whether that helps, we trained the paper-style setup — the 14 ECMWF inputs only — and compared it with our 16-input headline model (the same 14 plus the two calendar channels). The historical mean was never an input, so there was nothing else to remove.</p>
+  <p>This is the first experiment where each setup was trained <strong>three times with different random seeds</strong> (seeds 0, 1, 2). Same 724 training forecasts, same 153 test forecasts.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Score, 32-day average</th><th class="n">With calendar (16)</th><th class="n">Without (14)</th><th class="n">Difference</th></tr></thead>
+      <tbody>
+        <tr><td>Corr, standard</td><td class="n">0.442 (0.439–0.444)</td><td class="n">0.442 (0.437–0.445)</td><td class="n">0.000</td></tr>
+        <tr><td>Corr, clim. removed</td><td class="n">0.327 (0.317–0.334)</td><td class="n">0.335 (0.326–0.341)</td><td class="n">−0.008</td></tr>
+        <tr><td>RMSE, mm/day</td><td class="n">6.40 (6.36–6.43)</td><td class="n">6.40 (6.38–6.43)</td><td class="n">0.00</td></tr>
+      </tbody>
+      <caption>Mean of 3 seeds; brackets give the lowest and highest seed.</caption>
+    </table>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Corr, standard</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th></tr></thead>
+      <tbody>
+        <tr><td>With calendar</td><td class="n">0.539</td><td class="n">0.424</td><td class="n">0.391</td><td class="n">0.384</td></tr>
+        <tr><td>Without</td><td class="n">0.542</td><td class="n">0.422</td><td class="n">0.386</td><td class="n">0.378</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>The calendar adds nothing measurable.</strong> On the standard score and RMSE the two are identical. With climatology removed the model <em>without</em> it is 0.008 higher; a bootstrap over test forecasts calls that real (−0.013 to −0.003), but the three seeds of the same setup differ by up to 0.016, twice that gap, so we read it as no difference. ECMWF's own fields already carry the season, so a separate calendar signal is redundant.</p>
+
+  <h3>How much to trust single runs</h3>
+  <p>A score can change for two reasons, and they need different checks:</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Source</th><th>What it is</th><th>How we measure it</th></tr></thead>
+      <tbody>
+        <tr><td>Which test forecasts</td><td>A different set of 153 forecasts would give slightly different scores</td><td>Bootstrap: resample the test forecasts 10,000 times, take the 95% range</td></tr>
+        <tr><td>Training randomness</td><td>Starting weights, dropout and batch order differ, so retraining the same setup gives a different model</td><td>Retrain with several seeds and look at the spread</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The bootstrap covers only the first. The three seeds above measure the second:</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Score</th><th class="n">Spread across 3 seeds of one setup</th></tr></thead>
+      <tbody>
+        <tr><td>Corr, standard</td><td class="n">0.005–0.009</td></tr>
+        <tr class="hl"><td>Corr, clim. removed</td><td class="n">0.015–0.016</td></tr>
+        <tr><td>RMSE, mm/day</td><td class="n">0.06–0.08</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Earlier experiments assumed a retraining noise of about 0.006, from one accidental repeat on the standard score. With climatology removed it is closer to 0.016. Large results stand: beating raw and debiased ECMWF (gap 0.11), the flat predictions, and more data helping. Small single-run gains on the climatology-removed score — departure from normal (+0.011), the gate (+0.014), yesterday's rain (+0.011) — are within this noise and are not established. A difference should count only if it is bigger than both the bootstrap range and the seed spread.</p>
 </section>
 
 <section id="review">
@@ -757,10 +809,11 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
   <ol>
     <li>The model beats raw and debiased ECMWF at every forecast day. Its real skill, with climatology removed, is 0.33 averaged over 32 days: 0.55 at day 1, 0.15 at day 28.</li>
     <li>The standard score overstates skill, because climatology alone beats raw ECMWF on it.</li>
-    <li>Predicting the departure from normal with a gate is the best version so far (0.357 vs 0.332).</li>
+    <li>Predicting the departure from normal with a gate is the best single run so far (0.357 vs 0.332), but the gap is within retraining noise.</li>
     <li>Predictions are about half as variable as reality.</li>
     <li>Adding the 12 atmospheric inputs (humidity, winds, pressure, heights, SST) to the base five does not improve the score. Removing yesterday's observed rain changes little: no effect on the standard score, a small unconfirmed gain with climatology removed.</li>
       <li>Yesterday's observed rain is no longer an input, because it would not be available in real time. The review plots show the model overfits after about epoch 7, runs 1.2–1.7 mm/day too dry, and is worse than raw ECMWF at the all-India weekly amount even though it is better on the spatial pattern.</li>
+    <li>The day-of-year input adds nothing: 0.442 with and without it, over 3 seeds each. Retraining the same setup moves the climatology-removed score by up to 0.016, so single-run gains smaller than that are not established.</li>
   </ol>
 </section>
 
@@ -773,7 +826,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
         <tr><td>E<sub>pre</sub> gave 1.386 for a perfect forecast instead of 0 (a constant of 16 where it should be 4)</td><td>All E<sub>pre</sub> values too high by a constant; rankings unchanged</td><td>Fixed</td></tr>
         <tr><td>The paper's code computes its scaling over training, validation and test years together</td><td>Test data touched their pipeline; small effect</td><td>Our version uses training years only</td></tr>
         <tr><td>IMD dates each daily total by the day its 24-hour window ends (08:30 IST), so our truth is one day early. ECMWF's day-1 forecast matches IMD's next day better (0.605 vs 0.536).</td><td>Same in every run, so comparisons hold; absolute scores are understated</td><td>Not fixed yet</td></tr>
-        <tr><td>The laptop GPU occasionally faults mid-training (2 of about 12 runs)</td><td>Runs stopped early</td><td>Scored from saved best checkpoints</td></tr>
+        <tr><td>The laptop GPU occasionally faults mid-training (4 of about 18 runs)</td><td>Runs stopped early</td><td>Scored from saved best checkpoints, or rerun automatically</td></tr>
       </tbody>
     </table>
   </div>
@@ -785,7 +838,7 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <table>
       <thead><tr><th>Step</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Repeat Baseline and the gate model with 2–3 random seeds</td><td>Every comparison so far rests on one training run</td></tr>
+        <tr><td>Repeat Baseline, departure-from-normal and the gate model with 3 seeds</td><td>Their gains are within retraining noise (Experiment 7). Running now.</td></tr>
         <tr><td>Change the loss or back-transform to stop the flattening and the dry bias</td><td>Biggest known weakness; the review scatter plots show it clearly</td></tr>
         <tr><td>Quantile-mapping baseline</td><td>The standard simple method a new approach is expected to beat</td></tr>
         <tr><td>Tercile probability output (below / near / above normal)</td><td>Needed to compare with the <a href="https://doi.org/10.1007/s00382-026-08286-x">one published U-Net for Indian monsoon rainfall</a></td></tr>
