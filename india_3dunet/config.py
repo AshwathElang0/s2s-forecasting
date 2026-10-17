@@ -1,8 +1,8 @@
 """Shared constants for the India 3D U-Net experiment.
 
-Grid, lead-time, and split choices are pinned to literature-review.md
-sections 1, 5.1 and 7.1 (one level up, in the repo root) -- see plan.md
-for the reasoning behind each one.
+Grid, lead-time, and split choices are pinned to the literature review
+(../references/s2s_postprocessing_literature_review.md) sections 1, 5.1
+and 7.1 -- see plan.md for the reasoning behind each one.
 """
 from pathlib import Path
 
@@ -14,6 +14,15 @@ IMD_RAIN_FILE = DATA_ROOT / "IMD Rainfall" / "merged_imd_rain_data_1951_2025.nc"
 IMD_TMAX_FILE = DATA_ROOT / "IMD Temperature" / "merged_imd_tmax_data_1951_2025.nc"
 IMD_TMIN_FILE = DATA_ROOT / "IMD Temperature" / "merged_imd_tmin_data_1951_2025.nc"
 CACHE_ROOT = REPO_ROOT / "data_cache"
+EXPERIMENTS_ROOT = REPO_ROOT / "experiments"   # experiments/expNN_<name>/runs/<run>
+
+
+def find_run(name: str) -> Path:
+    """A run directory by name, whichever experiment folder it lives in."""
+    hits = sorted(EXPERIMENTS_ROOT.glob(f"exp*/runs/{name}"))
+    if len(hits) != 1:
+        raise FileNotFoundError(f"expected one run named {name!r} under {EXPERIMENTS_ROOT}, found {hits}")
+    return hits[0]
 
 # ECMWF native grid (data.md) -------------------------------------------
 NATIVE_LAT = 40

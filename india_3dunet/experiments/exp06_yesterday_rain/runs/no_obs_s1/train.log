@@ -1,0 +1,28 @@
+ablation 'no_lag': 16 channels -> ['tp_mean', 'tp_spread', 'doy_sin', 'doy_cos', 'q200', 'q500', 'q700', 'q850', 'u200', 'u850', 'v200', 'v850', 'msl', 'gh200', 'gh1000', 'wtmp']
+{'train': 724, 'val': 155, 'test': 153}
+epoch [1/100] train=1.1389 val=1.0188
+epoch [2/100] train=1.0089 val=0.9968
+epoch [3/100] train=0.9915 val=0.9837
+epoch [4/100] train=0.9798 val=0.9746
+epoch [5/100] train=0.9726 val=0.9703
+epoch [6/100] train=0.9632 val=0.9655
+epoch [7/100] train=0.9510 val=0.9606
+epoch [8/100] train=0.9456 val=0.9715
+epoch [9/100] train=0.9324 val=0.9676
+epoch [10/100] train=0.9222 val=0.9740
+epoch [11/100] train=0.9046 val=0.9790
+epoch [12/100] train=0.8866 val=1.0015
+epoch [13/100] train=0.8568 val=1.0251
+epoch [14/100] train=0.8225 val=1.0275
+epoch [15/100] train=0.7725 val=1.0496
+epoch [16/100] train=0.7103 val=1.0694
+epoch [17/100] train=0.6402 val=1.0942
+Early stopping at epoch 17
+Best epoch: 7 (val=0.9606)
+
+no_lag (16 channels), 153 test samples
+                       day 7    day 14    day 21    day 28  mean(wk1-4)
+pattern corr           0.543     0.421     0.389     0.385        0.435
+RMSE (mm)              6.037     6.613     6.813     6.886        6.587
+E_pre                  2.019     2.885     3.218     3.270        2.848
+SD ratio               0.761     0.480     1.190     0.499        0.732

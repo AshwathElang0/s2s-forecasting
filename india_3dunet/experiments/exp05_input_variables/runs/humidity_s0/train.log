@@ -1,0 +1,27 @@
+ablation 'moisture': 9 channels -> ['tp_mean', 'tp_spread', 'lag_obs', 'doy_sin', 'doy_cos', 'q200', 'q500', 'q700', 'q850']
+{'train': 724, 'val': 155, 'test': 153}
+epoch [1/100] train=1.1222 val=1.0154
+epoch [2/100] train=0.9983 val=0.9835
+epoch [3/100] train=0.9775 val=0.9791
+epoch [4/100] train=0.9605 val=0.9629
+epoch [5/100] train=0.9470 val=0.9781
+epoch [6/100] train=0.9346 val=0.9637
+epoch [7/100] train=0.9166 val=0.9870
+epoch [8/100] train=0.9018 val=0.9816
+epoch [9/100] train=0.8744 val=0.9914
+epoch [10/100] train=0.8466 val=1.0075
+epoch [11/100] train=0.8079 val=1.0271
+epoch [12/100] train=0.7558 val=1.0617
+epoch [13/100] train=0.6929 val=1.0637
+epoch [14/100] train=0.6252 val=1.0736
+epoch [15/100] train=0.5607 val=1.0833
+epoch [16/100] train=0.5038 val=1.1192
+Early stopping at epoch 16
+Best epoch: 4 (val=0.9629)
+
+moisture (9 channels), 153 test samples
+                       day 7    day 14    day 21    day 28  mean(wk1-4)
+pattern corr           0.535     0.422     0.387     0.384        0.432
+RMSE (mm)              6.149     6.653     6.841     6.884        6.632
+E_pre                  2.228     3.083     3.378     3.457        3.036
+SD ratio               0.615     0.407     0.880     0.437        0.585

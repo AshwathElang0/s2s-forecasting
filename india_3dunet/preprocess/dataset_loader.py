@@ -116,3 +116,4 @@ def apply_stats(features: np.ndarray, target: np.ndarray, stats: dict) -> tuple[
 def inverse_target(target_std: np.ndarray, stats: dict) -> np.ndarray:
     tgt_transformed = target_std * stats["target_std"] + stats["target_mean"]
     return _target_inverse_transform(tgt_transformed, stats["target_var"])
+

@@ -1,0 +1,73 @@
+calendar split: {'train': 724, 'val': 155, 'test': 153}
+usable: train=672 (dropped 52) val=155
+sigma_obs=0.7905  sigma_mdl=0.5249
+device: cuda amp: True
+epoch [1/100] train(loss/mse/corr)=(1.7109161884553972, 0.9385396165232505, 0.7723765632798595) val(loss/mse/corr)=(1.6540763616561889, 0.9149157305558523, 0.7391606291135152)
+epoch [2/100] train(loss/mse/corr)=(1.6320585550800446, 0.9041871140080113, 0.7278714458788594) val(loss/mse/corr)=(1.6120100498199463, 0.8856584986050924, 0.7263515591621399)
+epoch [3/100] train(loss/mse/corr)=(1.590077244466351, 0.8828899889223037, 0.7071872488144906) val(loss/mse/corr)=(1.580587661266327, 0.8740406652291616, 0.7065470139185588)
+epoch [4/100] train(loss/mse/corr)=(1.5693634306230853, 0.8743879910438291, 0.6949754357337952) val(loss/mse/corr)=(1.5671693921089171, 0.8652455727259318, 0.7019238233566284)
+epoch [5/100] train(loss/mse/corr)=(1.5664569427890163, 0.8813707290157196, 0.6850862156960272) val(loss/mse/corr)=(1.5605789264043173, 0.8645826896031698, 0.695996230840683)
+epoch [6/100] train(loss/mse/corr)=(1.539021865014107, 0.8595455144682238, 0.6794763418935961) val(loss/mse/corr)=(1.5616678158442179, 0.8609314322471618, 0.7007363915443421)
+epoch [7/100] train(loss/mse/corr)=(1.5317906333554177, 0.8602734131197776, 0.6715172115833529) val(loss/mse/corr)=(1.5529690782229106, 0.8611804882685343, 0.6917885780334473)
+epoch [8/100] train(loss/mse/corr)=(1.5098911735319323, 0.8507584693931765, 0.6591327036580732) val(loss/mse/corr)=(1.5467150568962098, 0.8599900305271149, 0.6867250502109528)
+epoch [9/100] train(loss/mse/corr)=(1.4944526014789459, 0.8406112924698861, 0.6538413080476946) val(loss/mse/corr)=(1.5579315304756165, 0.8595851937929789, 0.6983463446299235)
+epoch [10/100] train(loss/mse/corr)=(1.5022269987290906, 0.8522716222270843, 0.6499553688110844) val(loss/mse/corr)=(1.5486491839090983, 0.8569635411103567, 0.6916856447855632)
+epoch [11/100] train(loss/mse/corr)=(1.4870101424955553, 0.848827306301363, 0.6381828458078446) val(loss/mse/corr)=(1.5422786156336465, 0.8521167318026225, 0.6901618639628092)
+epoch [12/100] train(loss/mse/corr)=(1.4494524607735295, 0.8185441254848435, 0.6309083325247611) val(loss/mse/corr)=(1.554469648996989, 0.8644189039866129, 0.690050733089447)
+epoch [13/100] train(loss/mse/corr)=(1.4299960943960375, 0.8156022145863502, 0.6143938774062742) val(loss/mse/corr)=(1.5487773418426514, 0.8579761266708374, 0.690801199277242)
+epoch [14/100] train(loss/mse/corr)=(1.4079327737131426, 0.8033750191811593, 0.6045577458796962) val(loss/mse/corr)=(1.558236308892568, 0.8653198858102162, 0.6929164290428161)
+Traceback (most recent call last):
+  File "C:\Users\ethan\projects\s2s\india-3dunet\gated\train_gated.py", line 198, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\ethan\projects\s2s\india-3dunet\gated\train_gated.py", line 168, in main
+    train_loss = run_epoch(model, train_loader, mask, lat, device, optimizer, scaler, use_amp)
+  File "C:\Users\ethan\projects\s2s\india-3dunet\gated\train_gated.py", line 70, in run_epoch
+    total_loss += loss.item()
+                  ~~~~~~~~~^^
+torch.AcceleratorError: CUDA error: unknown error
+Search for `cudaErrorUnknown' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Unhandled exception caught in c10/util/AbortHandler.h
+00007FFB0B9CD95600007FFB0B9C3840 torch_python.dll!torch::autograd::THPCppFunction_requires_grad [<unknown file> @ <unknown line number>]
+00007FFD1085218700007FFD10852170 ucrtbase.dll!terminate [<unknown file> @ <unknown line number>]
+00007FFD040F186B <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFD040F21A5 <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFD040F21F6 <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFD040F43F500007FFD040F4350 VCRUNTIME140_1.dll!_CxxFrameHandler4 [<unknown file> @ <unknown line number>]
+00007FFD132854FF00007FFD13285460 ntdll.dll!_chkstk [<unknown file> @ <unknown line number>]
+00007FFD131EBD2500007FFD131EB6D0 ntdll.dll!RtlWow64GetCurrentMachine [<unknown file> @ <unknown line number>]
+00007FFD1312F88D00007FFD1312F700 ntdll.dll!RtlRaiseException [<unknown file> @ <unknown line number>]
+00007FFD104441CA00007FFD10444140 KERNELBASE.dll!RaiseException [<unknown file> @ <unknown line number>]
+00007FFD03FE55A900007FFD03FE5510 VCRUNTIME140.dll!CxxThrowException [<unknown file> @ <unknown line number>]
+00007FFCA3D15D5B00007FFCA3D15BE0 c10_cuda.dll!c10::cuda::c10_cuda_check_implementation [<unknown file> @ <unknown line number>]
+00007FFB0E7F7D3000007FFB0E7F1DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFB0E7F835500007FFB0E7F1DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFB0E7F4E3900007FFB0E7F1DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFC83B3B5CD00007FFC83B3B550 c10.dll!c10::StorageImpl::~StorageImpl [<unknown file> @ <unknown line number>]
+00007FFC83B3BC1700007FFC83B3B9B0 c10.dll!c10::VariableVersion::operator= [<unknown file> @ <unknown line number>]
+00007FFC83B5D5E600007FFC83B5D570 c10.dll!c10::TensorImpl::~TensorImpl [<unknown file> @ <unknown line number>]
+00007FFB43CA412500007FFB43CA2B20 torch_cpu.dll!at::DynamicLibrary::sym [<unknown file> @ <unknown line number>]
+00007FFB43C3A55800007FFB43C3A510 torch_cpu.dll!at::Tensor::operator= [<unknown file> @ <unknown line number>]
+00007FFB0BA8A6B900007FFB0BA5F3F0 torch_python.dll!torch::autograd::registerFunctionPreHook [<unknown file> @ <unknown line number>]
+00007FFC2F957BA100007FFC2F9550A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFC2F955D2000007FFC2F9550A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFC2F953DCC00007FFC2F953A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFC2F9540A400007FFC2F953A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFC2F95409A00007FFC2F953A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFC2F95409A00007FFC2F953A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFC2F9832FD00007FFC2F981C70 python313.dll!PyDict_GetItemRef [<unknown file> @ <unknown line number>]
+00007FFC2F9400D300007FFC2F940074 python313.dll!PyDict_SetItemString [<unknown file> @ <unknown line number>]
+00007FFC2F99CA7600007FFC2F99C7F4 python313.dll!PyMapping_GetItemString [<unknown file> @ <unknown line number>]
+00007FFC2F99C99F00007FFC2F99C7F4 python313.dll!PyMapping_GetItemString [<unknown file> @ <unknown line number>]
+00007FFC2F9DCC5F00007FFC2F9DC060 python313.dll!PyUnicode_DecodeUTF16Stateful [<unknown file> @ <unknown line number>]
+00007FFC2F92280300007FFC2F92272C python313.dll!Py_FinalizeEx [<unknown file> @ <unknown line number>]
+00007FFC2F92270100007FFC2F9226E4 python313.dll!Py_RunMain [<unknown file> @ <unknown line number>]
+00007FFC2FAD85CF00007FFC2FAD85A4 python313.dll!Py_Main [<unknown file> @ <unknown line number>]
+00007FF74D691230 <unknown symbol address> python.exe!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFD1235CD8700007FFD1235CD70 KERNEL32.DLL!BaseThreadInitThunk [<unknown file> @ <unknown line number>]
+00007FFD131CCAEC00007FFD131CCAC0 ntdll.dll!RtlUserThreadStart [<unknown file> @ <unknown line number>]
+

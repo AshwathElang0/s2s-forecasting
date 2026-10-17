@@ -1,0 +1,7 @@
+plain_aligned s0 done 13:23
+residual s0 done 13:36
+residual_mm s0 done 13:54
+plain_aligned s1 attempt 1 failed
+skip plain_aligned s0
+skip residual s0
+skip residual_mm s0

@@ -13,3 +13,12 @@ wheels/
 data_cache/
 *.grib2
 *.grib2.idx
+
+# Raw ECMWF / IMD data (~67 GB); data.md documents it and is kept
+data/*
+!data/data.md
+
+# Reference material: papers are not ours to redistribute, and the IRnAF
+# code is its own git clone (github.com/W-US-BCSR/IRnAF)
+references/papers/*.pdf
+references/IRnAF_code/

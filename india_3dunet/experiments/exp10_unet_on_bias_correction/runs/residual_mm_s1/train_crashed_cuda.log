@@ -1,0 +1,80 @@
+residual_mm seed 1: 16 inputs, Dyn++ anchor=True, scale=mm
+target scale: mean 0.000 sd 9.677; area-mean anomaly variance 0.0586
+before training: val loss/mse/pattern/area = [1.5209, 0.7538, 0.767, 0.5109]
+epoch [1/100] train=1.5305 val=1.5136 (mse 0.7468 pattern 0.7668 area 0.5713)
+epoch [2/100] train=1.5039 val=1.5109 (mse 0.7396 pattern 0.7713 area 0.5534)
+epoch [3/100] train=1.4996 val=1.4911 (mse 0.7340 pattern 0.7571 area 0.5826)
+epoch [4/100] train=1.4868 val=1.4960 (mse 0.7349 pattern 0.7612 area 0.5856)
+epoch [5/100] train=1.4811 val=1.4682 (mse 0.7275 pattern 0.7407 area 0.5305)
+epoch [6/100] train=1.4758 val=1.4654 (mse 0.7255 pattern 0.7398 area 0.5559)
+epoch [7/100] train=1.4685 val=1.4644 (mse 0.7240 pattern 0.7405 area 0.5518)
+epoch [8/100] train=1.4659 val=1.4588 (mse 0.7236 pattern 0.7352 area 0.5259)
+epoch [9/100] train=1.4599 val=1.4711 (mse 0.7246 pattern 0.7466 area 0.5657)
+epoch [10/100] train=1.4573 val=1.4602 (mse 0.7225 pattern 0.7378 area 0.5837)
+epoch [11/100] train=1.4560 val=1.4483 (mse 0.7169 pattern 0.7313 area 0.5661)
+epoch [12/100] train=1.4447 val=1.4560 (mse 0.7211 pattern 0.7350 area 0.5910)
+epoch [13/100] train=1.4421 val=1.4430 (mse 0.7160 pattern 0.7270 area 0.5075)
+epoch [14/100] train=1.4346 val=1.4496 (mse 0.7202 pattern 0.7293 area 0.5726)
+epoch [15/100] train=1.4293 val=1.4425 (mse 0.7139 pattern 0.7286 area 0.5405)
+epoch [16/100] train=1.4238 val=1.4370 (mse 0.7134 pattern 0.7236 area 0.5555)
+epoch [17/100] train=1.4144 val=1.4373 (mse 0.7145 pattern 0.7228 area 0.5751)
+epoch [18/100] train=1.4049 val=1.4276 (mse 0.7093 pattern 0.7183 area 0.5346)
+epoch [19/100] train=1.4027 val=1.4305 (mse 0.7138 pattern 0.7166 area 0.5752)
+epoch [20/100] train=1.3954 val=1.4293 (mse 0.7111 pattern 0.7182 area 0.6028)
+epoch [21/100] train=1.3817 val=1.4251 (mse 0.7093 pattern 0.7157 area 0.5162)
+Traceback (most recent call last):
+  File "C:\Users\ethan\projects\s2s\s2s-forecasting\india_3dunet\experiments\exp10_unet_on_bias_correction\train_residual.py", line 252, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\ethan\projects\s2s\s2s-forecasting\india_3dunet\experiments\exp10_unet_on_bias_correction\train_residual.py", line 203, in main
+    trl = run_epoch(model, tr_loader, **common, optimizer=optimizer, scaler=scaler, use_amp=use_amp)
+  File "C:\Users\ethan\projects\s2s\s2s-forecasting\india_3dunet\experiments\exp10_unet_on_bias_correction\train_residual.py", line 99, in run_epoch
+    sums += [t.item() for t in terms]
+             ~~~~~~^^
+torch.AcceleratorError: CUDA error: unknown error
+Search for `cudaErrorUnknown' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Unhandled exception caught in c10/util/AbortHandler.h
+00007FFBBADBD95600007FFBBADB3840 torch_python.dll!torch::autograd::THPCppFunction_requires_grad [<unknown file> @ <unknown line number>]
+00007FFDAC18218700007FFDAC182170 ucrtbase.dll!terminate [<unknown file> @ <unknown line number>]
+00007FFDA64F186B <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFDA64F21A5 <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFDA64F21F6 <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFDA64F43F500007FFDA64F4350 VCRUNTIME140_1.dll!_CxxFrameHandler4 [<unknown file> @ <unknown line number>]
+00007FFDAEDE54FF00007FFDAEDE5460 ntdll.dll!_chkstk [<unknown file> @ <unknown line number>]
+00007FFDAED4BD2500007FFDAED4B6D0 ntdll.dll!RtlWow64GetCurrentMachine [<unknown file> @ <unknown line number>]
+00007FFDAEC8F88D00007FFDAEC8F700 ntdll.dll!RtlRaiseException [<unknown file> @ <unknown line number>]
+00007FFDAC2E41CA00007FFDAC2E4140 KERNELBASE.dll!RaiseException [<unknown file> @ <unknown line number>]
+00007FFD963755A900007FFD96375510 VCRUNTIME140.dll!CxxThrowException [<unknown file> @ <unknown line number>]
+00007FFD8F605D5B00007FFD8F605BE0 c10_cuda.dll!c10::cuda::c10_cuda_check_implementation [<unknown file> @ <unknown line number>]
+00007FFBCDA67D3000007FFBCDA61DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFBCDA6835500007FFBCDA61DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFBCDA64E3900007FFBCDA61DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFD95EAB5CD00007FFD95EAB550 c10.dll!c10::StorageImpl::~StorageImpl [<unknown file> @ <unknown line number>]
+00007FFD95EABC1700007FFD95EAB9B0 c10.dll!c10::VariableVersion::operator= [<unknown file> @ <unknown line number>]
+00007FFD95ECD5E600007FFD95ECD570 c10.dll!c10::TensorImpl::~TensorImpl [<unknown file> @ <unknown line number>]
+00007FFBC1D0412500007FFBC1D02B20 torch_cpu.dll!at::DynamicLibrary::sym [<unknown file> @ <unknown line number>]
+00007FFBC1C9A55800007FFBC1C9A510 torch_cpu.dll!at::Tensor::operator= [<unknown file> @ <unknown line number>]
+00007FFBBAE7A6B900007FFBBAE4F3F0 torch_python.dll!torch::autograd::registerFunctionPreHook [<unknown file> @ <unknown line number>]
+00007FFCEAC47BA100007FFCEAC450A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFCEAC45D2000007FFCEAC450A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFCEAC459BB00007FFCEAC450A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFCEAC43DCC00007FFCEAC43A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFCEAC440A400007FFCEAC43A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFCEAC4409A00007FFCEAC43A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFCEAC4409A00007FFCEAC43A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFCEAC732FD00007FFCEAC71C70 python313.dll!PyDict_GetItemRef [<unknown file> @ <unknown line number>]
+00007FFCEAC300D300007FFCEAC30074 python313.dll!PyDict_SetItemString [<unknown file> @ <unknown line number>]
+00007FFCEAC8CA7600007FFCEAC8C7F4 python313.dll!PyMapping_GetItemString [<unknown file> @ <unknown line number>]
+00007FFCEAC8C99F00007FFCEAC8C7F4 python313.dll!PyMapping_GetItemString [<unknown file> @ <unknown line number>]
+00007FFCEACCCC5F00007FFCEACCC060 python313.dll!PyUnicode_DecodeUTF16Stateful [<unknown file> @ <unknown line number>]
+00007FFCEAC1280300007FFCEAC1272C python313.dll!Py_FinalizeEx [<unknown file> @ <unknown line number>]
+00007FFCEAC1270100007FFCEAC126E4 python313.dll!Py_RunMain [<unknown file> @ <unknown line number>]
+00007FFCEADC85CF00007FFCEADC85A4 python313.dll!Py_Main [<unknown file> @ <unknown line number>]
+00007FF617421230 <unknown symbol address> python.exe!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFDAD4ACD8700007FFDAD4ACD70 KERNEL32.DLL!BaseThreadInitThunk [<unknown file> @ <unknown line number>]
+00007FFDAED2CAEC00007FFDAED2CAC0 ntdll.dll!RtlUserThreadStart [<unknown file> @ <unknown line number>]
+

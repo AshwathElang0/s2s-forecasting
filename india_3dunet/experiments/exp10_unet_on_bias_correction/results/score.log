@@ -1,0 +1,32 @@
+scored Dyn++ (Exp 9)
+scored U-Net no_obs (Exp 6, trained misaligned)
+scored plain_aligned (1 seeds)
+scored plain_aligned + val mean fix
+scored residual (1 seeds)
+scored residual + val mean fix
+scored residual_mm (3 seeds)
+scored residual_mm + val mean fix
+| method | wk1_acc | wk2_acc | wk3_acc | wk4_acc | wk1_ai_acc | wk2_ai_acc | wk3_ai_acc | wk4_ai_acc | anom_corr | corr | rmse | bias | sd_ratio |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Dyn++ (Exp 9) | 0.668 | 0.512 | 0.330 | 0.239 | 0.910 | 0.837 | 0.590 | 0.389 | 0.238 | 0.406 | 6.569 | -0.056 | 0.625 |
+| U-Net no_obs (Exp 6, trained misaligned) | 0.591 | 0.386 | 0.224 | 0.142 | 0.535 | 0.398 | 0.203 | 0.095 | 0.342 | 0.448 | 6.385 | -1.550 | 0.394 |
+| plain_aligned (1 seeds) | 0.551 | 0.358 | 0.207 | 0.136 | 0.459 | 0.331 | 0.170 | 0.073 | 0.353 | 0.447 | 6.435 | -1.648 | 0.369 |
+| plain_aligned + val mean fix | 0.691 | 0.479 | 0.293 | 0.190 | 0.902 | 0.750 | 0.451 | 0.239 | 0.309 | 0.447 | 6.408 | 0.050 | 0.700 |
+| residual (1 seeds) | 0.628 | 0.389 | 0.196 | 0.141 | 0.613 | 0.400 | 0.189 | 0.104 | 0.327 | 0.443 | 6.380 | -1.584 | 0.397 |
+| residual + val mean fix | 0.706 | 0.469 | 0.292 | 0.197 | 0.908 | 0.692 | 0.433 | 0.269 | 0.273 | 0.443 | 6.440 | 0.080 | 0.721 |
+| residual_mm (3 seeds) | 0.730 | 0.558 | 0.404 | 0.299 | 0.901 | 0.838 | 0.624 | 0.420 | 0.337 | 0.443 | 6.232 | -0.365 | 0.598 |
+| residual_mm + val mean fix | 0.736 | 0.554 | 0.392 | 0.278 | 0.918 | 0.794 | 0.529 | 0.311 | 0.333 | 0.443 | 6.325 | 0.042 | 0.673 |
+
+Seed spread (max - min over seeds):
+| method | wk1_acc | wk2_acc | wk3_acc | wk4_acc | wk1_ai_acc | wk2_ai_acc | wk3_ai_acc | wk4_ai_acc | anom_corr | corr | rmse | bias | sd_ratio |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| U-Net no_obs (Exp 6, trained misaligned) | 0.072 | 0.021 | 0.026 | 0.024 | 0.180 | 0.054 | 0.025 | 0.022 | 0.017 | 0.004 | 0.071 | 0.289 | 0.010 |
+| residual_mm (3 seeds) | 0.007 | 0.018 | 0.019 | 0.019 | 0.024 | 0.043 | 0.031 | 0.069 | 0.017 | 0.002 | 0.016 | 0.062 | 0.025 |
+| residual_mm + val mean fix | 0.003 | 0.020 | 0.023 | 0.029 | 0.014 | 0.043 | 0.028 | 0.062 | 0.018 | 0.002 | 0.010 | 0.021 | 0.018 |
+
+Paired date bootstrap, difference [95% range]:
+  plain_aligned (1 seeds) - Dyn++: wk1_acc -0.117 [-0.145,-0.088]  wk1_ai_acc -0.450 [-0.617,-0.322]  wk2_acc -0.154 [-0.205,-0.105]  wk2_ai_acc -0.506 [-0.681,-0.354]  wk3_acc -0.123 [-0.182,-0.065]  wk3_ai_acc -0.420 [-0.625,-0.229]  wk4_acc -0.103 [-0.170,-0.033]  wk4_ai_acc -0.315 [-0.578,-0.056]
+  residual (1 seeds) - Dyn++: wk1_acc -0.039 [-0.060,-0.020]  wk1_ai_acc -0.296 [-0.410,-0.209]  wk2_acc -0.123 [-0.168,-0.078]  wk2_ai_acc -0.437 [-0.596,-0.298]  wk3_acc -0.134 [-0.210,-0.066]  wk3_ai_acc -0.401 [-0.611,-0.210]  wk4_acc -0.099 [-0.182,-0.016]  wk4_ai_acc -0.285 [-0.544,-0.030]
+  residual (1 seeds) - plain_aligned: wk1_acc +0.078 [+0.053,+0.102]  wk1_ai_acc +0.154 [+0.102,+0.220]  wk2_acc +0.031 [+0.009,+0.053]  wk2_ai_acc +0.069 [+0.033,+0.110]  wk3_acc -0.011 [-0.038,+0.015]  wk3_ai_acc +0.018 [-0.011,+0.048]  wk4_acc +0.005 [-0.028,+0.034]  wk4_ai_acc +0.031 [-0.003,+0.065]
+  residual_mm (3 seeds) - Dyn++: wk1_acc +0.063 [+0.044,+0.082]  wk1_ai_acc -0.009 [-0.024,+0.005]  wk2_acc +0.046 [+0.020,+0.071]  wk2_ai_acc +0.001 [-0.028,+0.027]  wk3_acc +0.074 [+0.027,+0.118]  wk3_ai_acc +0.034 [-0.052,+0.109]  wk4_acc +0.060 [+0.014,+0.105]  wk4_ai_acc +0.031 [-0.066,+0.133]
+  residual_mm (3 seeds) - plain_aligned: wk1_acc +0.179 [+0.148,+0.209]  wk1_ai_acc +0.441 [+0.313,+0.607]  wk2_acc +0.200 [+0.156,+0.246]  wk2_ai_acc +0.506 [+0.350,+0.693]  wk3_acc +0.197 [+0.154,+0.242]  wk3_ai_acc +0.454 [+0.246,+0.661]  wk4_acc +0.163 [+0.100,+0.223]  wk4_ai_acc +0.347 [+0.093,+0.617]

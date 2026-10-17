@@ -1,0 +1,62 @@
+ablation 'no_lag_no_doy': 14 channels -> ['tp_mean', 'tp_spread', 'q200', 'q500', 'q700', 'q850', 'u200', 'u850', 'v200', 'v850', 'msl', 'gh200', 'gh1000', 'wtmp']
+{'train': 724, 'val': 155, 'test': 153}
+epoch [1/100] train=1.1601 val=1.0571
+epoch [2/100] train=1.0145 val=0.9979
+Traceback (most recent call last):
+  File "C:\Users\ethan\projects\s2s\india-3dunet\paper_tests\train_ablation.py", line 208, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\ethan\projects\s2s\india-3dunet\paper_tests\train_ablation.py", line 156, in main
+    tr = run_epoch(model, train_loader, mask, lat_t, device, optimizer, scaler, use_amp)
+  File "C:\Users\ethan\projects\s2s\india-3dunet\train.py", line 68, in run_epoch
+    mse = masked_mse_loss(preds, labels, mask)
+  File "C:\Users\ethan\projects\s2s\india-3dunet\model\unet3d.py", line 112, in masked_mse_loss
+    denom = mask.expand_as(diff2).sum().clamp_min(1.0)
+            ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+torch.AcceleratorError: CUDA error: an illegal memory access was encountered
+Search for `cudaErrorIllegalAddress' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Unhandled exception caught in c10/util/AbortHandler.h
+00007FFC8AA5D95600007FFC8AA53840 torch_python.dll!torch::autograd::THPCppFunction_requires_grad [<unknown file> @ <unknown line number>]
+00007FFEA3CD218700007FFEA3CD2170 ucrtbase.dll!terminate [<unknown file> @ <unknown line number>]
+00007FFE7593186B <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFE759321A5 <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFE759321F6 <unknown symbol address> VCRUNTIME140_1.dll!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFE759343F500007FFE75934350 VCRUNTIME140_1.dll!_CxxFrameHandler4 [<unknown file> @ <unknown line number>]
+00007FFEA6A254FF00007FFEA6A25460 ntdll.dll!_chkstk [<unknown file> @ <unknown line number>]
+00007FFEA698BD2500007FFEA698B6D0 ntdll.dll!RtlWow64GetCurrentMachine [<unknown file> @ <unknown line number>]
+00007FFEA68CF88D00007FFEA68CF700 ntdll.dll!RtlRaiseException [<unknown file> @ <unknown line number>]
+00007FFEA42641CA00007FFEA4264140 KERNELBASE.dll!RaiseException [<unknown file> @ <unknown line number>]
+00007FFE759455A900007FFE75945510 VCRUNTIME140.dll!CxxThrowException [<unknown file> @ <unknown line number>]
+00007FFE30A95D5B00007FFE30A95BE0 c10_cuda.dll!c10::cuda::c10_cuda_check_implementation [<unknown file> @ <unknown line number>]
+00007FFC9D703D0000007FFC9D701DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFC9D707C4E00007FFC9D701DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFC9D70835500007FFC9D701DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFC9D704E3900007FFC9D701DD0 torch_cuda.dll!torch::cuda::CUDAPluggableAllocator::CUDAPluggableAllocator::enable [<unknown file> @ <unknown line number>]
+00007FFDC889B5CD00007FFDC889B550 c10.dll!c10::StorageImpl::~StorageImpl [<unknown file> @ <unknown line number>]
+00007FFDC889BC1700007FFDC889B9B0 c10.dll!c10::VariableVersion::operator= [<unknown file> @ <unknown line number>]
+00007FFDC88BD5E600007FFDC88BD570 c10.dll!c10::TensorImpl::~TensorImpl [<unknown file> @ <unknown line number>]
+00007FFC919A412500007FFC919A2B20 torch_cpu.dll!at::DynamicLibrary::sym [<unknown file> @ <unknown line number>]
+00007FFC9193A55800007FFC9193A510 torch_cpu.dll!at::Tensor::operator= [<unknown file> @ <unknown line number>]
+00007FFC8AB1A6B900007FFC8AAEF3F0 torch_python.dll!torch::autograd::registerFunctionPreHook [<unknown file> @ <unknown line number>]
+00007FFDB1D87BA100007FFDB1D850A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFDB1D85D2000007FFDB1D850A0 python313.dll!PyObject_GC_Del [<unknown file> @ <unknown line number>]
+00007FFDB1D83DCC00007FFDB1D83A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFDB1D840A400007FFDB1D83A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFDB1D8409A00007FFDB1D83A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFDB1D8409A00007FFDB1D83A4C python313.dll!Py_Dealloc [<unknown file> @ <unknown line number>]
+00007FFDB1DB32FD00007FFDB1DB1C70 python313.dll!PyDict_GetItemRef [<unknown file> @ <unknown line number>]
+00007FFDB1D700D300007FFDB1D70074 python313.dll!PyDict_SetItemString [<unknown file> @ <unknown line number>]
+00007FFDB1DCCA7600007FFDB1DCC7F4 python313.dll!PyMapping_GetItemString [<unknown file> @ <unknown line number>]
+00007FFDB1DCC99F00007FFDB1DCC7F4 python313.dll!PyMapping_GetItemString [<unknown file> @ <unknown line number>]
+00007FFDB1E0CC5F00007FFDB1E0C060 python313.dll!PyUnicode_DecodeUTF16Stateful [<unknown file> @ <unknown line number>]
+00007FFDB1D5280300007FFDB1D5272C python313.dll!Py_FinalizeEx [<unknown file> @ <unknown line number>]
+00007FFDB1D5270100007FFDB1D526E4 python313.dll!Py_RunMain [<unknown file> @ <unknown line number>]
+00007FFDB1F085CF00007FFDB1F085A4 python313.dll!Py_Main [<unknown file> @ <unknown line number>]
+00007FF718711230 <unknown symbol address> python.exe!<unknown symbol> [<unknown file> @ <unknown line number>]
+00007FFEA60ACD8700007FFEA60ACD70 KERNEL32.DLL!BaseThreadInitThunk [<unknown file> @ <unknown line number>]
+00007FFEA696CAEC00007FFEA696CAC0 ntdll.dll!RtlUserThreadStart [<unknown file> @ <unknown line number>]
+

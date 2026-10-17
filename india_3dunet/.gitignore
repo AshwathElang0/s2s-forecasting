@@ -1,7 +1,11 @@
 __pycache__/
 *.pyc
 data_cache/
-runs/*
-!runs/*/
-runs/*/*
-!runs/*/results.md
+
+# Experiment runs: keep the small, readable files (results.md, stats.json,
+# best_epoch, *.log), drop checkpoints, histories and prediction arrays.
+experiments/*/runs/**/*.pt
+experiments/*/runs/**/*.pkl
+experiments/*/runs/**/*.npz
+experiments/*/results/**/*_predictions.npz
+experiments/*/runs/_smoke*/

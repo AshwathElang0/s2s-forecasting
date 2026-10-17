@@ -1,0 +1,22 @@
+
+== corr ==
+with calendar (16)   32d seeds [0.442 0.44  0.437] mean 0.440 d7=0.507 d14=0.423 d21=0.376 d28=0.386
+no calendar (14)     32d seeds [0.434 0.443 0.44 ] mean 0.439 d7=0.504 d14=0.424 d21=0.372 d28=0.381
+with - without: +0.0004  95% [-0.0014, +0.0023]
+seed spread: with 0.0047, without 0.0085
+
+== corr_anom ==
+with calendar (16)   32d seeds [0.311 0.329 0.326] mean 0.322 d7=0.489 d14=0.315 d21=0.177 d28=0.157
+no calendar (14)     32d seeds [0.336 0.32  0.333] mean 0.330 d7=0.497 d14=0.315 d21=0.189 d28=0.163
+with - without: -0.0074  95% [-0.0123, -0.0023]
+seed spread: with 0.0173, without 0.0160
+
+== rmse ==
+with calendar (16)   32d seeds [6.373 6.414 6.435] mean 6.408 d7=6.111 d14=6.492 d21=6.650 d28=6.725
+no calendar (14)     32d seeds [6.445 6.401 6.393] mean 6.413 d7=6.133 d14=6.511 d21=6.670 d28=6.728
+with - without: -0.0054  95% [-0.0137, +0.0028]
+seed spread: with 0.0619, without 0.0527
+
+real	0m20.175s
+user	0m0.015s
+sys	0m0.015s

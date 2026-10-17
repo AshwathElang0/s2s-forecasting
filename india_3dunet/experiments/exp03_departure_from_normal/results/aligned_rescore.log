@@ -1,0 +1,37 @@
+
+== corr ==
+baseline (17)        32d seeds [0.441 0.439 0.439] mean 0.440 d7=0.503 d14=0.424 d21=0.371 d28=0.381
+departure, no gate   32d seeds [0.436 0.437 0.441] mean 0.438 d7=0.502 d14=0.418 d21=0.374 d28=0.381
+gate                 32d seeds [0.439 0.44  0.437] mean 0.439 d7=0.496 d14=0.422 d21=0.376 d28=0.382
+departure, no gate - baseline (17): -0.0017 95% [-0.0053,+0.0018]
+gate - departure, no gate: +0.0005 95% [-0.0012,+0.0021]
+gate - baseline (17): -0.0012 95% [-0.0051,+0.0024]
+spread baseline (17): 0.0015
+spread departure, no gate: 0.0049
+spread gate: 0.0035
+
+== corr_anom ==
+baseline (17)        32d seeds [0.323 0.317 0.305] mean 0.315 d7=0.486 d14=0.308 d21=0.163 d28=0.137
+departure, no gate   32d seeds [0.335 0.343 0.343] mean 0.340 d7=0.506 d14=0.312 d21=0.222 d28=0.174
+gate                 32d seeds [0.349 0.337 0.34 ] mean 0.342 d7=0.504 d14=0.319 d21=0.219 d28=0.171
+departure, no gate - baseline (17): +0.0256 95% [+0.0146,+0.0372]
+gate - departure, no gate: +0.0013 95% [-0.0025,+0.0050]
+gate - baseline (17): +0.0269 95% [+0.0165,+0.0374]
+spread baseline (17): 0.0177
+spread departure, no gate: 0.0085
+spread gate: 0.0122
+
+== rmse ==
+baseline (17)        32d seeds [6.501 6.347 6.416] mean 6.421 d7=6.102 d14=6.520 d21=6.688 d28=6.728
+departure, no gate   32d seeds [6.37  6.47  6.439] mean 6.426 d7=6.053 d14=6.545 d21=6.681 d28=6.709
+gate                 32d seeds [6.435 6.427 6.441] mean 6.434 d7=6.119 d14=6.522 d21=6.680 d28=6.704
+departure, no gate - baseline (17): +0.0049 95% [-0.0090,+0.0196]
+gate - departure, no gate: +0.0081 95% [-0.0050,+0.0206]
+gate - baseline (17): +0.0130 95% [-0.0046,+0.0307]
+spread baseline (17): 0.1541
+spread departure, no gate: 0.0999
+spread gate: 0.0137
+
+real	1m25.594s
+user	0m0.046s
+sys	0m0.000s

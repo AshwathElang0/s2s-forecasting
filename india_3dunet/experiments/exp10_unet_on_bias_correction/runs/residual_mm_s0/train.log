@@ -1,0 +1,38 @@
+residual_mm seed 0: 16 inputs, Dyn++ anchor=True, scale=mm
+target scale: mean 0.000 sd 9.677; area-mean anomaly variance 0.0586
+before training: val loss/mse/pattern/area = [1.5209, 0.7538, 0.767, 0.5109]
+epoch [1/100] train=1.5288 val=1.5682 (mse 0.7522 pattern 0.8160 area 0.6485)
+epoch [2/100] train=1.5025 val=1.4921 (mse 0.7390 pattern 0.7532 area 0.5385)
+epoch [3/100] train=1.4904 val=1.4784 (mse 0.7312 pattern 0.7472 area 0.5603)
+epoch [4/100] train=1.4789 val=1.4753 (mse 0.7284 pattern 0.7469 area 0.5591)
+epoch [5/100] train=1.4756 val=1.4737 (mse 0.7281 pattern 0.7457 area 0.5487)
+epoch [6/100] train=1.4694 val=1.4690 (mse 0.7255 pattern 0.7435 area 0.5731)
+epoch [7/100] train=1.4603 val=1.4667 (mse 0.7258 pattern 0.7409 area 0.6233)
+epoch [8/100] train=1.4625 val=1.4690 (mse 0.7234 pattern 0.7456 area 0.5785)
+epoch [9/100] train=1.4557 val=1.4527 (mse 0.7183 pattern 0.7344 area 0.5688)
+epoch [10/100] train=1.4489 val=1.4472 (mse 0.7157 pattern 0.7314 area 0.5223)
+epoch [11/100] train=1.4410 val=1.4444 (mse 0.7172 pattern 0.7272 area 0.5186)
+epoch [12/100] train=1.4286 val=1.4332 (mse 0.7115 pattern 0.7217 area 0.5426)
+epoch [13/100] train=1.4235 val=1.4377 (mse 0.7153 pattern 0.7223 area 0.5397)
+epoch [14/100] train=1.4153 val=1.4423 (mse 0.7143 pattern 0.7280 area 0.5506)
+epoch [15/100] train=1.4087 val=1.4296 (mse 0.7128 pattern 0.7169 area 0.5569)
+epoch [16/100] train=1.3997 val=1.4261 (mse 0.7087 pattern 0.7174 area 0.5255)
+epoch [17/100] train=1.3897 val=1.4478 (mse 0.7165 pattern 0.7313 area 0.5818)
+epoch [18/100] train=1.3787 val=1.4303 (mse 0.7125 pattern 0.7178 area 0.5029)
+epoch [19/100] train=1.3718 val=1.4370 (mse 0.7171 pattern 0.7199 area 0.5086)
+epoch [20/100] train=1.3624 val=1.4327 (mse 0.7135 pattern 0.7192 area 0.5689)
+epoch [21/100] train=1.3484 val=1.4253 (mse 0.7119 pattern 0.7135 area 0.5158)
+epoch [22/100] train=1.3348 val=1.4471 (mse 0.7250 pattern 0.7221 area 0.5196)
+epoch [23/100] train=1.3267 val=1.4435 (mse 0.7205 pattern 0.7230 area 0.5146)
+epoch [24/100] train=1.3040 val=1.4595 (mse 0.7322 pattern 0.7273 area 0.5202)
+epoch [25/100] train=1.2866 val=1.4517 (mse 0.7245 pattern 0.7273 area 0.5512)
+epoch [26/100] train=1.2641 val=1.4587 (mse 0.7316 pattern 0.7271 area 0.5547)
+epoch [27/100] train=1.2456 val=1.4555 (mse 0.7313 pattern 0.7241 area 0.5246)
+epoch [28/100] train=1.2111 val=1.4745 (mse 0.7410 pattern 0.7335 area 0.5696)
+epoch [29/100] train=1.1921 val=1.4949 (mse 0.7515 pattern 0.7434 area 0.6198)
+epoch [30/100] train=1.1665 val=1.4681 (mse 0.7391 pattern 0.7290 area 0.5490)
+epoch [31/100] train=1.1282 val=1.4890 (mse 0.7522 pattern 0.7369 area 0.5550)
+Early stopping at epoch 31
+Best epoch: 21 (val=1.4253)
+val mean fix (obs/pred) by week: [1.11, 1.112, 1.15, 1.15]
+saved 153 test predictions under C:\Users\ethan\projects\s2s\s2s-forecasting\india_3dunet\experiments\exp10_unet_on_bias_correction\runs\residual_mm_s0

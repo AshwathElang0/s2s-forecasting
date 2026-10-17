@@ -1,0 +1,29 @@
+residual seed 0: 16 inputs, Dyn++ anchor=True, scale=log
+target scale: mean 0.637 sd 1.036; area-mean anomaly variance 0.0542
+before training: val loss/mse/pattern/area = [1.2334, 0.703, 0.5304, 0.0]
+epoch [1/100] train=1.1823 val=1.1149 (mse 0.5830 pattern 0.5318 area 0.0000)
+epoch [2/100] train=1.1146 val=1.0666 (mse 0.5565 pattern 0.5101 area 0.0000)
+epoch [3/100] train=1.0815 val=1.0472 (mse 0.5408 pattern 0.5063 area 0.0000)
+epoch [4/100] train=1.0531 val=1.0225 (mse 0.5290 pattern 0.4935 area 0.0000)
+epoch [5/100] train=1.0330 val=1.0096 (mse 0.5207 pattern 0.4889 area 0.0000)
+epoch [6/100] train=1.0129 val=1.0002 (mse 0.5155 pattern 0.4848 area 0.0000)
+epoch [7/100] train=0.9952 val=0.9955 (mse 0.5119 pattern 0.4836 area 0.0000)
+epoch [8/100] train=0.9787 val=0.9866 (mse 0.5115 pattern 0.4751 area 0.0000)
+epoch [9/100] train=0.9685 val=0.9893 (mse 0.5097 pattern 0.4795 area 0.0000)
+epoch [10/100] train=0.9532 val=0.9930 (mse 0.5149 pattern 0.4781 area 0.0000)
+epoch [11/100] train=0.9382 val=0.9949 (mse 0.5140 pattern 0.4809 area 0.0000)
+epoch [12/100] train=0.9264 val=0.9791 (mse 0.5056 pattern 0.4735 area 0.0000)
+epoch [13/100] train=0.9115 val=0.9967 (mse 0.5124 pattern 0.4843 area 0.0000)
+epoch [14/100] train=0.8948 val=1.0140 (mse 0.5213 pattern 0.4927 area 0.0000)
+epoch [15/100] train=0.8706 val=1.0059 (mse 0.5185 pattern 0.4874 area 0.0000)
+epoch [16/100] train=0.8420 val=1.0285 (mse 0.5283 pattern 0.5002 area 0.0000)
+epoch [17/100] train=0.8071 val=1.0501 (mse 0.5442 pattern 0.5060 area 0.0000)
+epoch [18/100] train=0.7704 val=1.0760 (mse 0.5585 pattern 0.5175 area 0.0000)
+epoch [19/100] train=0.7202 val=1.0936 (mse 0.5649 pattern 0.5287 area 0.0000)
+epoch [20/100] train=0.6715 val=1.1232 (mse 0.5834 pattern 0.5399 area 0.0000)
+epoch [21/100] train=0.6123 val=1.1407 (mse 0.5922 pattern 0.5485 area 0.0000)
+epoch [22/100] train=0.5633 val=1.1638 (mse 0.6109 pattern 0.5529 area 0.0000)
+Early stopping at epoch 22
+Best epoch: 12 (val=0.9791)
+val mean fix (obs/pred) by week: [1.537, 1.833, 2.063, 2.134]
+saved 153 test predictions under C:\Users\ethan\projects\s2s\s2s-forecasting\india_3dunet\experiments\exp10_unet_on_bias_correction\runs\residual_s0

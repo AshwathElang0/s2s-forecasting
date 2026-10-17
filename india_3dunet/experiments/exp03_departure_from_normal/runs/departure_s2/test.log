@@ -1,0 +1,4 @@
+Test complete. 153 samples.
+Pattern corr by lead day (first 7): [0.572 0.638 0.624 0.605 0.589 0.578 0.534]
+RMSE by lead day (first 7): [5.621 5.509 5.175 5.375 5.953 6.26  6.067]
+Saved under runs\rain_anom_plain_s2

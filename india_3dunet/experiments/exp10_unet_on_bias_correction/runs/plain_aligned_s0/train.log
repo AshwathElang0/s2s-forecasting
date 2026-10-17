@@ -1,0 +1,23 @@
+plain_aligned seed 0: 16 inputs, Dyn++ anchor=False, scale=log
+target scale: mean 0.637 sd 1.036; area-mean anomaly variance 0.0542
+before training: val loss/mse/pattern/area = [2.0475, 1.0159, 1.0316, 0.0]
+epoch [1/100] train=1.1312 val=1.0349 (mse 0.5352 pattern 0.4997 area 0.0000)
+epoch [2/100] train=1.0150 val=0.9960 (mse 0.5144 pattern 0.4816 area 0.0000)
+epoch [3/100] train=0.9995 val=0.9934 (mse 0.5122 pattern 0.4812 area 0.0000)
+epoch [4/100] train=0.9833 val=0.9804 (mse 0.5066 pattern 0.4737 area 0.0000)
+epoch [5/100] train=0.9772 val=0.9757 (mse 0.5013 pattern 0.4744 area 0.0000)
+epoch [6/100] train=0.9672 val=0.9759 (mse 0.5011 pattern 0.4747 area 0.0000)
+epoch [7/100] train=0.9579 val=0.9801 (mse 0.5068 pattern 0.4733 area 0.0000)
+epoch [8/100] train=0.9472 val=0.9797 (mse 0.5061 pattern 0.4736 area 0.0000)
+epoch [9/100] train=0.9382 val=0.9909 (mse 0.5123 pattern 0.4787 area 0.0000)
+epoch [10/100] train=0.9234 val=0.9844 (mse 0.5092 pattern 0.4752 area 0.0000)
+epoch [11/100] train=0.9016 val=1.0112 (mse 0.5226 pattern 0.4886 area 0.0000)
+epoch [12/100] train=0.8797 val=1.0026 (mse 0.5179 pattern 0.4847 area 0.0000)
+epoch [13/100] train=0.8523 val=1.0179 (mse 0.5243 pattern 0.4936 area 0.0000)
+epoch [14/100] train=0.8102 val=1.0475 (mse 0.5422 pattern 0.5053 area 0.0000)
+epoch [15/100] train=0.7505 val=1.0717 (mse 0.5618 pattern 0.5099 area 0.0000)
+epoch [16/100] train=0.6844 val=1.1013 (mse 0.5716 pattern 0.5297 area 0.0000)
+Early stopping at epoch 16
+Best epoch: 5 (val=0.9757)
+val mean fix (obs/pred) by week: [1.732, 1.874, 1.975, 2.115]
+saved 153 test predictions under C:\Users\ethan\projects\s2s\s2s-forecasting\india_3dunet\experiments\exp10_unet_on_bias_correction\runs\plain_aligned_s0
