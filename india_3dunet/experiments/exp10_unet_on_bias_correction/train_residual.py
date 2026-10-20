@@ -22,8 +22,9 @@ same optimiser, batch size, early stopping and 724 training forecasts:
                  A 1-epoch trial of the log-space version of this loss went
                  ~50% too dry on val, which is why this one works in mm.
 
-Training dates get the leave-one-year-out Dyn++ (fit without their own year);
-val and test get the full training fit. Run Experiment 9 first: it writes the
+Training dates get the leave-one-year-out Dyn++ (fit without their own year),
+or with --dynpp_fit past the past-years-only fit (Experiment 11); val and test
+always get the full training fit. Run Experiment 9 first: it writes the
 factors to data_cache/bias_correction/dynpp_factors.npz.
 
 After training, predicts val and test. A per-lead-week mean correction
@@ -112,12 +113,16 @@ def main():
     parser.add_argument("--patience", type=int, default=10)
     parser.add_argument("--area_weight", type=float, default=0.0,
                         help="weight of the all-India term; off by default (untested idea, see docstring)")
-    parser.add_argument("--run_name", default=None, help="defaults to <variant>_s<seed>")
+    parser.add_argument("--dynpp_fit", choices=["loyo", "past"], default="loyo",
+                        help="Dyn++ factors for training dates: leave-one-year-out, or past years only (Exp 11)")
+    parser.add_argument("--out_dir", default=None, help="folder for run folders; defaults to runs/ here")
+    parser.add_argument("--run_name", default=None, help="defaults to <variant>[_past]_s<seed>")
     args = parser.parse_args()
 
     torch.backends.cudnn.benchmark = True
     torch.manual_seed(args.seed)
-    run_dir = HERE / "runs" / (args.run_name or f"{args.variant}_s{args.seed}")
+    suffix = "_past" if args.dynpp_fit == "past" else ""
+    run_dir = Path(args.out_dir or HERE / "runs") / (args.run_name or f"{args.variant}{suffix}_s{args.seed}")
     run_dir.mkdir(parents=True, exist_ok=True)
 
     model_cls, scale = VARIANTS[args.variant]
@@ -129,7 +134,8 @@ def main():
     splits = split_dates(all_dates)
     factors = load_factors(BC_ROOT / "dynpp_factors.npz")
     obs_clim, _ = ensure_climatology("rain", splits["train"], all_dates)
-    print(f"{args.variant} seed {args.seed}: {len(idx)} inputs, Dyn++ anchor={residual}, scale={scale}")
+    print(f"{args.variant} seed {args.seed}: {len(idx)} inputs, Dyn++ anchor={residual}, scale={scale}, "
+          f"train Dyn++ fit={args.dynpp_fit}")
 
     def load(split):
         """Features plus target / anchor / climatology in mm/day, on aligned days."""
@@ -137,7 +143,8 @@ def main():
         feat, _, mask = load_raw("rain", dates)
         feat = feat[:, idx]
         tp, obs = load_aligned(dates)
-        anchor = apply_dynpp(tp, dates, factors, use_loyo=(split == "train")) if residual else np.zeros_like(tp)
+        anchor = apply_dynpp(tp, dates, factors, use_loyo=(split == "train"),
+                             per_year=args.dynpp_fit) if residual else np.zeros_like(tp)
         if residual:
             feat[:, 0] = np.log1p(np.clip(anchor, 0, None))   # Dyn++ in place of raw ECMWF rain
         clim = np.expm1(obs_clim_for_dates(obs_clim, dates, config.LEAD_DAYS, offset=1))
@@ -172,7 +179,7 @@ def main():
 
     stats = {"variant": args.variant, "seed": args.seed, "scale": scale, "channels": names,
              "feat_mean": feat_mean.tolist(), "feat_std": feat_std.tolist(), "target_mean": t_mean,
-             "target_std": t_std, "area_mean_var": am_var, "area_weight": args.area_weight}
+             "target_std": t_std, "area_mean_var": am_var, "area_weight": args.area_weight, "dynpp_fit": args.dynpp_fit}
     (run_dir / "stats.json").write_text(json.dumps(stats, indent=2))
     print(f"target scale: mean {t_mean:.3f} sd {t_std:.3f}; area-mean anomaly variance {am_var:.4f}")
 

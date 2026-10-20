@@ -1,0 +1,32 @@
+residual_mm seed 0: 16 inputs, Dyn++ anchor=True, scale=mm, train Dyn++ fit=past
+target scale: mean 0.000 sd 9.677; area-mean anomaly variance 0.0586
+before training: val loss/mse/pattern/area = [1.5209, 0.7538, 0.767, 0.5109]
+epoch [1/100] train=1.5446 val=1.7042 (mse 0.8329 pattern 0.8713 area 1.4376)
+epoch [2/100] train=1.5209 val=1.4892 (mse 0.7390 pattern 0.7503 area 0.5562)
+epoch [3/100] train=1.5049 val=1.4792 (mse 0.7330 pattern 0.7462 area 0.6050)
+epoch [4/100] train=1.4902 val=1.4688 (mse 0.7288 pattern 0.7399 area 0.5581)
+epoch [5/100] train=1.4856 val=1.4703 (mse 0.7294 pattern 0.7408 area 0.5297)
+epoch [6/100] train=1.4798 val=1.4670 (mse 0.7268 pattern 0.7402 area 0.5711)
+epoch [7/100] train=1.4660 val=1.4544 (mse 0.7215 pattern 0.7329 area 0.5711)
+epoch [8/100] train=1.4675 val=1.4527 (mse 0.7203 pattern 0.7324 area 0.5418)
+epoch [9/100] train=1.4555 val=1.4444 (mse 0.7198 pattern 0.7246 area 0.5710)
+epoch [10/100] train=1.4467 val=1.4391 (mse 0.7152 pattern 0.7239 area 0.5246)
+epoch [11/100] train=1.4385 val=1.4377 (mse 0.7181 pattern 0.7196 area 0.5229)
+epoch [12/100] train=1.4256 val=1.4285 (mse 0.7136 pattern 0.7149 area 0.5477)
+epoch [13/100] train=1.4211 val=1.4401 (mse 0.7181 pattern 0.7220 area 0.5482)
+epoch [14/100] train=1.4048 val=1.4357 (mse 0.7139 pattern 0.7218 area 0.5412)
+epoch [15/100] train=1.4007 val=1.4250 (mse 0.7126 pattern 0.7124 area 0.5428)
+epoch [16/100] train=1.3861 val=1.4281 (mse 0.7079 pattern 0.7202 area 0.5062)
+epoch [17/100] train=1.3709 val=1.4439 (mse 0.7197 pattern 0.7243 area 0.5692)
+epoch [18/100] train=1.3546 val=1.4260 (mse 0.7135 pattern 0.7125 area 0.4952)
+epoch [19/100] train=1.3458 val=1.4483 (mse 0.7229 pattern 0.7254 area 0.5236)
+epoch [20/100] train=1.3278 val=1.4434 (mse 0.7223 pattern 0.7211 area 0.5638)
+epoch [21/100] train=1.3075 val=1.4451 (mse 0.7261 pattern 0.7189 area 0.5264)
+epoch [22/100] train=1.2818 val=1.4687 (mse 0.7404 pattern 0.7283 area 0.5273)
+epoch [23/100] train=1.2545 val=1.4637 (mse 0.7310 pattern 0.7328 area 0.5455)
+epoch [24/100] train=1.2224 val=1.5067 (mse 0.7688 pattern 0.7379 area 0.5471)
+epoch [25/100] train=1.2061 val=1.4892 (mse 0.7491 pattern 0.7401 area 0.5339)
+Early stopping at epoch 25
+Best epoch: 15 (val=1.4250)
+val mean fix (obs/pred) by week: [1.143, 1.169, 1.201, 1.204]
+saved 153 test predictions under experiments\exp11_past_only_factors\runs\residual_mm_past_s0

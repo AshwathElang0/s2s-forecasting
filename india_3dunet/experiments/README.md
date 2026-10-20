@@ -24,6 +24,8 @@ Exp 2–7 run on aligned days; the output is
 | 8 | [exp08_review_diagnostics](exp08_review_diagnostics/) | professor's review: figures, scatter, case studies | U-Net is too dry and loses the all-India signal |
 | 9 | [exp09_bias_correction](exp09_bias_correction/) | how far does plain bias correction (Dyn++) get? | beats every U-Net from Exps 1–7 on weekly totals |
 | 10 | [exp10_unet_on_bias_correction](exp10_unet_on_bias_correction/) | does a U-Net on top of Dyn++ beat Dyn++? | yes, if trained in mm (`residual_mm`): +0.05–0.07 weekly corr per cell, 3 seeds; ties on all-India |
+| 11 | [exp11_past_only_factors](exp11_past_only_factors/) | does `residual_mm` still win with Dyn++ training factors from past years only? | yes: within noise of Exp 10 (3 seeds), still beats Dyn++ per cell at weeks 1–4; this is the final model |
+| 12 | [exp12_seasonal_bias_check](exp12_seasonal_bias_check/) | does ECMWF's bias follow the season, justifying the ±1-month window? | yes: neighbouring months' bias maps are alike, distant months' are not; ±1 month ties same-month, wider is worse |
 
 ## Run names
 

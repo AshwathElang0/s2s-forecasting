@@ -18,7 +18,10 @@ Two fits:
   full   all training years            -> applied to val and test dates
   loyo   leave-one-year-out, per year  -> applied to training dates, so a
          model trained on top of Dyn++ never sees a correction fitted on the
-         year it is learning from
+         year it is learning from (Exp 10)
+  past   past years only, per year     -> the stricter alternative for
+         training dates (Exp 11): year y uses only years before y, so no IMD
+         from y or later; the first year gets factors of 1 (raw ECMWF)
 
 Everything runs on the aligned pair from `load_aligned`: ECMWF lead t
 (sample cache channel 0, mm/day) against IMD date issue+1+t, read directly
@@ -82,16 +85,16 @@ def _weekly_totals(x: np.ndarray) -> np.ndarray:
     return np.stack([x[:, 7 * w:7 * w + 7].sum(axis=1) for w in range(N_WEEKS)], axis=1)
 
 
-def _month_in_window(months: np.ndarray, m: int) -> np.ndarray:
-    return np.abs(((months - m + 6) % 12) - 6) <= MONTH_HALF_WINDOW
+def _month_in_window(months: np.ndarray, m: int, half_window: int = MONTH_HALF_WINDOW) -> np.ndarray:
+    return np.abs(((months - m + 6) % 12) - 6) <= half_window
 
 
-def _ratios(sum_f, sum_o, count) -> np.ndarray:
+def _ratios(sum_f, sum_o, count, half_window: int = MONTH_HALF_WINDOW) -> np.ndarray:
     """(12, 4, H, W) clipped factors from per-month sums; months are 1-indexed."""
     out = np.ones((12, N_WEEKS) + sum_f.shape[-2:], dtype=np.float32)
     months = np.arange(1, 13)
     for m in months:
-        sel = _month_in_window(months, m)
+        sel = _month_in_window(months, m, half_window)
         n = count[sel].sum()
         if n == 0:
             continue
@@ -101,8 +104,12 @@ def _ratios(sum_f, sum_o, count) -> np.ndarray:
     return np.nan_to_num(out, nan=1.0)
 
 
-def fit_dynpp(tp: np.ndarray, obs: np.ndarray, dates: list[datetime], mask: np.ndarray) -> dict:
-    """Factors from training dates: {"full": (12,4,H,W), "loyo": {year: (12,4,H,W)}}.
+def fit_dynpp(tp: np.ndarray, obs: np.ndarray, dates: list[datetime], mask: np.ndarray,
+              half_window: int = MONTH_HALF_WINDOW) -> dict:
+    """Factors from training dates: {"full": (12,4,H,W), "loyo": {year: ...}, "past": {year: ...}}.
+
+    loyo[y] is fitted on every training year except y; past[y] on the years
+    before y only. half_window is the +/- month window (6 = all months).
 
     Cells outside the IMD `mask` keep a factor of 1, so ECMWF passes through
     unchanged over ocean and neighbouring countries."""
@@ -122,30 +129,38 @@ def fit_dynpp(tp: np.ndarray, obs: np.ndarray, dates: list[datetime], mask: np.n
         by_year[int(y)] = (sf, so, c)
 
     def ratios(sf, so, c):
-        r = _ratios(sf, so, c)
+        r = _ratios(sf, so, c, half_window)
         r[..., ~mask] = 1.0
         return r
 
     total = [sum(v[i] for v in by_year.values()) for i in range(3)]
     loyo = {y: ratios(*(total[i] - v[i] for i in range(3))) for y, v in by_year.items()}
-    return {"full": ratios(*total), "loyo": loyo}
+    # past-only: year y fitted on earlier years alone; the first year has no
+    # history, so its factors are 1 (raw ECMWF)
+    past = {y: ratios(*(sum((by_year[p][i] for p in by_year if p < y), np.zeros_like(by_year[y][i]))
+                        for i in range(3))) for y in by_year}
+    return {"full": ratios(*total), "loyo": loyo, "past": past}
 
 
-def apply_dynpp(tp: np.ndarray, dates: list[datetime], factors: dict, use_loyo: bool = False) -> np.ndarray:
-    """Multiply each date's daily ECMWF rain by its (issue month, lead week) factor."""
+def apply_dynpp(tp: np.ndarray, dates: list[datetime], factors: dict, use_loyo: bool = False,
+                per_year: str = "loyo") -> np.ndarray:
+    """Multiply each date's daily ECMWF rain by its (issue month, lead week) factor.
+    With use_loyo, each date gets its year's `per_year` fit ("loyo" or "past")."""
     wk = week_of_day(tp.shape[1])
     out = np.empty_like(tp)
     for n, d in enumerate(dates):
-        f = factors["loyo"][d.year] if use_loyo else factors["full"]
+        f = factors[per_year][d.year] if use_loyo else factors["full"]
         out[n] = tp[n] * f[d.month - 1][wk]
     return out
 
 
 def save_factors(factors: dict, path) -> None:
-    np.savez(path, full=factors["full"], **{f"loyo_{y}": v for y, v in factors["loyo"].items()})
+    np.savez(path, full=factors["full"], **{f"loyo_{y}": v for y, v in factors["loyo"].items()},
+             **{f"past_{y}": v for y, v in factors.get("past", {}).items()})
 
 
 def load_factors(path) -> dict:
     with np.load(path) as z:
         return {"full": z["full"],
-                "loyo": {int(k[5:]): z[k] for k in z.files if k.startswith("loyo_")}}
+                "loyo": {int(k[5:]): z[k] for k in z.files if k.startswith("loyo_")},
+                "past": {int(k[5:]): z[k] for k in z.files if k.startswith("past_")}}

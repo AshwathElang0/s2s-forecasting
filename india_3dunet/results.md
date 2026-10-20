@@ -384,6 +384,33 @@ Daily, days 1–28, `residual_mm`: RMSE 6.23 mm/day (Dyn++ 6.57), bias −0.37 m
 - **Aligning the dates alone does not help the old design**: `plain_aligned` ≈ the Experiment 6 model.
 - **Caveats:** 3 test years only; `plain_aligned` and `residual` are single seeds; `residual_mm` was picked for extra seeds after seed 0's test score (seeds 1–2 reproduced it).
 
+### Experiment 11 — Past-years-only Dyn++ factors for training
+
+In Experiment 10, a training forecast from year Y got Dyn++ factors fitted on every training year except Y, so partly on future years. Here they use only 2004 … Y−1 (2004 gets factor 1). Validation and test factors are unchanged (2004–2017, all past). No IMD rain is a U-Net input in either case. Folder: [`experiments/exp11_past_only_factors/`](experiments/exp11_past_only_factors/). 3 seeds each. **This is the final `residual_mm`**; the Experiment 10 figures now use it.
+
+| | per cell, wk 1 | wk 2 | wk 3 | wk 4 | all-India, wk 1 | wk 2 | wk 3 | wk 4 |
+|---|---|---|---|---|---|---|---|---|
+| Dyn++ | 0.668 | 0.512 | 0.330 | 0.239 | 0.910 | 0.837 | 0.590 | 0.389 |
+| `residual_mm`, leave-one-year-out | 0.730 | 0.558 | 0.404 | 0.299 | 0.901 | 0.838 | 0.624 | 0.420 |
+| **`residual_mm`, past only (final)** | **0.725** | **0.544** | **0.399** | **0.287** | **0.906** | **0.838** | **0.629** | **0.421** |
+
+| weekly RMSE, mm/week | per cell, wk 1 | wk 2 | wk 3 | wk 4 |
+|---|---|---|---|---|
+| Dyn++ | 26.8 | 30.8 | 34.0 | 35.0 |
+| `residual_mm`, leave-one-year-out | 24.6 | 29.8 | 32.7 | 34.2 |
+| **`residual_mm`, past only (final)** | **24.8** | **30.1** | **32.8** | **34.4** |
+
+- **No measurable cost**: past only − leave-one-year-out is −0.005 to −0.014 per cell, every 95% range includes 0, about the seed spread.
+- **Still beats Dyn++** at every week per cell (+0.058, +0.033, +0.069, +0.048; all ranges above 0, week 4 only just) and ties it on all-India. Daily RMSE 6.23, bias −0.41 mm/day.
+
+### Experiment 12 — Does ECMWF's bias follow the season? (no training)
+
+Dyn++ pools issue months within ±1 month, assuming ECMWF's bias in July resembles June's and August's. Folder: [`experiments/exp12_seasonal_bias_check/`](experiments/exp12_seasonal_bias_check/).
+
+- **The bias has a seasonal cycle**: ECMWF is too dry before the monsoon (Feb–Apr, land-median factor up to 1.3), about right on average in Jun–Sep (0.9–1.0) and too wet after it (0.5–0.7 in Oct–Dec).
+- **It is a pattern, not noise**: factor maps fitted on even vs odd years (independent forecasts) correlate 0.68–0.75 for the same month, 0.53–0.59 one month apart, 0.34–0.43 two months apart and 0.12–0.17 six months apart.
+- **±1 month is a sensible window**: on validation it ties same-month-only factors per cell; ±2, ±3 months and all-year are steadily worse.
+
 ---
 
 ## 5. Key findings
@@ -397,6 +424,7 @@ Daily, days 1–28, `residual_mm`: RMSE 6.23 mm/day (Dyn++ 6.57), bias −0.37 m
 7. Retraining the same setup moves the climatology-removed correlation by up to 0.018. Single-run differences smaller than that are not established.
 8. On weekly totals, the usual S2S measure, plain bias correction (Dyn++) beats every U-Net from Experiments 1–7. Their gains on the daily log-space score do not carry over, and training in log space makes them about 50% too dry (Experiment 9).
 9. A U-Net that multiplies Dyn++ by a learned correction and trains in mm (`residual_mm`) is the best model so far. It scores +0.05 to +0.07 weekly correlation over Dyn++ per cell at weeks 1–4 (3 seeds, all ranges exclude 0), is 1–2 mm/week more accurate, and ties Dyn++ on all-India (Experiment 10).
+10. That result does not rely on future data: with Dyn++ training factors from past years only, `residual_mm` scores within noise of the original (3 seeds) and still beats Dyn++ in every week (Experiment 11). This past-only version is the final model. ECMWF's bias over India follows the season smoothly, which justifies Dyn++'s ±1-month window (Experiment 12).
 
 ## 6. Bugs found
 

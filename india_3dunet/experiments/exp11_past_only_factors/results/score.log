@@ -1,0 +1,21 @@
+scored Dyn++ (Exp 9) (1 seeds)
+scored residual_mm, leave-one-year-out (Exp 10) (3 seeds)
+scored residual_mm, past only (Exp 11) (3 seeds)
+| method | wk1_acc | wk2_acc | wk3_acc | wk4_acc | wk1_ai_acc | wk2_ai_acc | wk3_ai_acc | wk4_ai_acc | wk1_rmse | wk2_rmse | wk3_rmse | wk4_rmse | anom_corr | rmse | bias | sd_ratio |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Dyn++ (Exp 9) | 0.668 | 0.512 | 0.330 | 0.239 | 0.910 | 0.837 | 0.590 | 0.389 | 26.839 | 30.844 | 33.983 | 34.960 | 0.238 | 6.569 | -0.056 | 0.625 |
+| residual_mm, leave-one-year-out (Exp 10) | 0.730 | 0.558 | 0.404 | 0.299 | 0.901 | 0.838 | 0.624 | 0.420 | 24.565 | 29.760 | 32.737 | 34.164 | 0.337 | 6.232 | -0.365 | 0.598 |
+| residual_mm, past only (Exp 11) | 0.725 | 0.544 | 0.399 | 0.287 | 0.906 | 0.838 | 0.629 | 0.421 | 24.767 | 30.125 | 32.843 | 34.432 | 0.338 | 6.230 | -0.414 | 0.599 |
+
+Seed spread (max - min over seeds):
+| method | wk1_acc | wk2_acc | wk3_acc | wk4_acc | wk1_ai_acc | wk2_ai_acc | wk3_ai_acc | wk4_ai_acc | wk1_rmse | wk2_rmse | wk3_rmse | wk4_rmse | anom_corr | rmse | bias | sd_ratio |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| residual_mm, leave-one-year-out (Exp 10) | 0.007 | 0.018 | 0.019 | 0.019 | 0.024 | 0.043 | 0.031 | 0.069 | 0.358 | 0.485 | 0.261 | 0.235 | 0.017 | 0.016 | 0.062 | 0.025 |
+| residual_mm, past only (Exp 11) | 0.015 | 0.014 | 0.011 | 0.015 | 0.003 | 0.025 | 0.022 | 0.016 | 0.285 | 0.243 | 0.188 | 0.249 | 0.010 | 0.039 | 0.176 | 0.015 |
+
+Best epochs: {'residual_mm, leave-one-year-out (Exp 10)': ['20', '22', '22'], 'residual_mm, past only (Exp 11)': ['14', '21', '20']}
+
+Paired date bootstrap, difference [95% range]:
+  residual_mm, leave-one-year-out (Exp 10) - Dyn++: wk1_acc +0.063 [+0.044,+0.082]  wk1_ai_acc -0.009 [-0.024,+0.005]  wk1_rmse -2.274 [-2.963,-1.581]  wk2_acc +0.046 [+0.020,+0.071]  wk2_ai_acc +0.001 [-0.028,+0.027]  wk2_rmse -1.084 [-1.744,-0.392]  wk3_acc +0.074 [+0.027,+0.118]  wk3_ai_acc +0.034 [-0.052,+0.109]  wk3_rmse -1.246 [-2.084,-0.393]  wk4_acc +0.060 [+0.014,+0.105]  wk4_ai_acc +0.031 [-0.066,+0.133]  wk4_rmse -0.796 [-1.538,-0.106]
+  residual_mm, past only (Exp 11) - Dyn++: wk1_acc +0.058 [+0.040,+0.075]  wk1_ai_acc -0.004 [-0.021,+0.011]  wk1_rmse -2.072 [-2.729,-1.416]  wk2_acc +0.033 [+0.004,+0.061]  wk2_ai_acc +0.001 [-0.033,+0.032]  wk2_rmse -0.718 [-1.482,+0.042]  wk3_acc +0.069 [+0.018,+0.116]  wk3_ai_acc +0.039 [-0.042,+0.112]  wk3_rmse -1.140 [-2.048,-0.252]  wk4_acc +0.048 [+0.003,+0.092]  wk4_ai_acc +0.032 [-0.055,+0.132]  wk4_rmse -0.527 [-1.176,+0.170]
+  past only - residual_mm, leave-one-year-out (Exp 10): wk1_acc -0.005 [-0.012,+0.002]  wk1_ai_acc +0.005 [-0.007,+0.016]  wk1_rmse +0.202 [-0.052,+0.481]  wk2_acc -0.014 [-0.031,+0.001]  wk2_ai_acc +0.000 [-0.016,+0.016]  wk2_rmse +0.366 [-0.018,+0.762]  wk3_acc -0.005 [-0.028,+0.017]  wk3_ai_acc +0.005 [-0.022,+0.033]  wk3_rmse +0.106 [-0.280,+0.504]  wk4_acc -0.012 [-0.035,+0.011]  wk4_ai_acc +0.001 [-0.034,+0.040]  wk4_rmse +0.268 [-0.089,+0.607]

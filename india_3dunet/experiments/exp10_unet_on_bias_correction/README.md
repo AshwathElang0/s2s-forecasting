@@ -16,9 +16,40 @@ as in Exp 9: 153 test forecasts (2021–2023), days 1–28.
 | `residual` | Dyn++ | Dyn++ + correction, log space | same as above |
 | `residual_mm` | Dyn++ | Dyn++ × exp(correction), mm/day | MSE in mm + (1 − pattern corr of the departure from normal) |
 
+### `residual` vs `residual_mm`, in plain words
+
+Both start from the same Dyn++ forecast and learn a correction to it. They
+differ in **how the correction is applied** and in **what scale the training
+error is measured on**.
+
+| | `residual` | `residual_mm` |
+|---|---|---|
+| Correction | **adds** a number in log(1 + rain) | **multiplies** Dyn++ by a factor, exp(c) (×0.5, ×1.2, …) |
+| Error measured in | log(1 + rain) | mm/day, i.e. real rain amounts |
+| Pattern score | whole map (geography included) | departure from normal only |
+| Result | ~50% too dry, below Dyn++ | nearly unbiased, beats Dyn++ |
+
+Why the scale matters: on a log scale, under-predicting a 40 mm/day downpour
+as 20 mm/day costs about the same as predicting 2 mm/day instead of 1. Most
+grid-days are dry or light, so a log-scale error rewards getting light rain
+right and barely penalises missing heavy rain. Converting a log-scale "best
+guess" back to mm also lands below the true average (averaging logs
+underestimates the average amount). Together these make every log-space model
+too dry: `residual` starts as an unbiased Dyn++ and training pulls it back to
+roughly half the observed rain.
+
+`residual_mm` measures error in mm/day, so missing a heavy-rain week costs
+what it should. The multiplicative form keeps rain non-negative and makes "no
+change" (factor 1) the starting point. It keeps Dyn++'s correct amounts and
+adds skill on top. Scoring the pattern on departures from normal stops the
+network earning credit for geography it already gets for free (the west
+coast is always wetter).
+
 - In the two residual variants, Dyn++ rain replaces raw ECMWF rain as input
   channel 0. Training dates use leave-one-year-out Dyn++ factors, so the
-  network never sees a correction fitted on its own target year.
+  network never sees a correction fitted on its own target year. Those
+  factors still include later years; Exp 11 reruns `residual_mm` with
+  past-years-only factors and gets the same scores.
 - The correction head starts at zero, so before training each residual model
   *is* Dyn++.
 - `residual_mm` has an optional all-India loss term (`--area_weight`). It is
@@ -29,7 +60,9 @@ as in Exp 9: 153 test forecasts (2021–2023), days 1–28.
   both with and without it.
 
 Code: `train_residual.py` (training), `score_runs.py` (scoring),
-`run_all.sh` (the full batch). The model classes live in
+`run_all.sh` (the full batch), `make_figures.py` (predicted-vs-observed time
+series and case maps in `figures/`, used by the progress report). The same
+figures for the final model are in Exp 11. The model classes live in
 `model/residual_unet.py`.
 
 ```

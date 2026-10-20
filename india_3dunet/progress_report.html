@@ -14,9 +14,10 @@
   --code-bg: #f0efea;
   --band: rgba(42, 120, 214, 0.12);
   --s1: #2a78d6;
-  --s2: #eb6834;
-  --s3: #1baf7a;
+  --s2: #d95f02;
+  --s3: #1b9e77;
   --s4: #eda100;
+  --s5: #7570b3;
   --ref1: #52514e;
   --ref2: #898781;
   --link: #1c5cab;
@@ -37,9 +38,10 @@
     --code-bg: #232322;
     --band: rgba(57, 135, 229, 0.18);
     --s1: #3987e5;
-    --s2: #d95926;
-    --s3: #199e70;
+    --s2: #f07a2a;
+    --s3: #2bb88e;
     --s4: #c98500;
+    --s5: #9a95e0;
     --ref1: #c3c2b7;
     --ref2: #898781;
     --link: #86b6ef;
@@ -57,9 +59,10 @@
   --code-bg: #232322;
   --band: rgba(57, 135, 229, 0.18);
   --s1: #3987e5;
-  --s2: #d95926;
-  --s3: #199e70;
+  --s2: #f07a2a;
+  --s3: #2bb88e;
   --s4: #c98500;
+  --s5: #9a95e0;
   --ref1: #c3c2b7;
   --ref2: #898781;
   --link: #86b6ef;
@@ -73,10 +76,11 @@ body {
   line-height: 1.6;
   padding-inline: 20px;
   padding-block: 0 64px;
+  margin: 0;
 }
 main { max-width: 860px; margin: 0 auto; }
-header { padding-block: 56px 32px; }
-section { padding-block: 40px; border-top: 1px solid var(--grid); display: grid; gap: 18px; }
+header { padding-block: 48px 20px; }
+section { padding-block: 36px; border-top: 1px solid var(--grid); display: grid; gap: 18px; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.2; text-wrap: balance; margin: 0; }
 h1 { font-size: 2.4rem; }
 h2 { font-size: 1.7rem; }
@@ -85,9 +89,8 @@ p, ul, ol { margin: 0; max-width: 66ch; }
 ul, ol { padding-left: 1.3em; display: grid; gap: 6px; }
 .eyebrow { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
 .lede { font-size: 1.2rem; color: var(--ink-2); }
-.meta { color: var(--ink-2); font-size: 0.95rem; }
 a { color: var(--link); text-underline-offset: 2px; }
-a:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--s1); outline-offset: 2px; }
 code, .mono { font-family: var(--mono); font-size: 0.88em; }
 code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; }
 pre.formula {
@@ -97,6 +100,7 @@ pre.formula {
 }
 .callout { border-left: 3px solid var(--s1); padding: 4px 0 4px 16px; max-width: 66ch; }
 .callout strong { display: block; }
+.callout.win { border-left-color: var(--s2); }
 
 .scroll { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 0.95rem; font-variant-numeric: tabular-nums; }
@@ -105,6 +109,7 @@ th { font-weight: 600; color: var(--ink-2); font-size: 0.85rem; }
 td.n, th.n { text-align: right; padding-left: 12px; padding-right: 16px; white-space: nowrap; }
 td:last-child, th:last-child { padding-right: 0; }
 tr.hl td { font-weight: 600; }
+tr.best td { font-weight: 600; color: var(--s2); }
 caption { caption-side: bottom; text-align: left; color: var(--ink-2); font-size: 0.88rem; padding-top: 8px; }
 
 figure { margin: 0; display: grid; gap: 10px; }
@@ -118,6 +123,28 @@ figcaption { color: var(--ink-2); font-size: 0.92rem; max-width: 70ch; }
 .legend svg { width: 28px; height: 10px; }
 details { font-size: 0.95rem; }
 summary { cursor: pointer; color: var(--ink-2); }
+
+/* tabs */
+.tabs { display: flex; gap: 8px; flex-wrap: wrap; position: sticky; top: 0; z-index: 5; background: var(--plane); padding-block: 10px; border-bottom: 1px solid var(--grid); }
+.tabs button {
+  font: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--axis); border-radius: 999px; padding: 6px 16px;
+}
+.tabs button[aria-selected="true"] { background: var(--ink); color: var(--plane); border-color: var(--ink); }
+.tabs button .tag { font-weight: 400; margin-left: 6px; color: var(--s2); }
+.tabs button[aria-selected="true"] .tag { color: var(--s4); }
+
+/* stat tiles */
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+.tile { background: var(--surface); border: 1px solid var(--grid); border-radius: 4px; padding: 14px 16px; display: grid; gap: 2px; }
+.tile .k { font-size: 0.85rem; color: var(--ink-2); }
+.tile .v { font-family: var(--serif); font-size: 1.9rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--s2); }
+.tile .s { font-size: 0.88rem; color: var(--ink-2); }
+
+.steps { counter-reset: step; list-style: none; padding: 0; display: grid; gap: 10px; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 2rem 1fr; gap: 8px; }
+.steps li::before { content: counter(step); font-family: var(--serif); font-weight: 600; color: var(--plane); background: var(--ink-2); border-radius: 50%; width: 1.6rem; height: 1.6rem; display: grid; place-items: center; font-size: 0.9rem; margin-top: 2px; }
 
 .tip {
   position: fixed; pointer-events: none; z-index: 10;
@@ -133,6 +160,8 @@ summary { cursor: pointer; color: var(--ink-2); }
 /* SVG styling through tokens */
 .d-box { fill: var(--surface); stroke: var(--axis); stroke-width: 1.5; }
 .d-key { fill: var(--surface); stroke: var(--s1); stroke-width: 2; }
+.d-win { fill: var(--surface); stroke: var(--s2); stroke-width: 2; }
+.d-green { fill: var(--surface); stroke: var(--s3); stroke-width: 2; }
 .d-t { fill: var(--ink); font-family: var(--sans); font-size: 15px; }
 .d-tb { fill: var(--ink); font-family: var(--sans); font-size: 15px; font-weight: 600; }
 .d-s { fill: var(--ink-2); font-family: var(--sans); font-size: 13px; }
@@ -146,7 +175,6 @@ summary { cursor: pointer; color: var(--ink-2); }
 .c-lab { fill: var(--ink); font-family: var(--sans); font-size: 14px; }
 .c-val { fill: var(--ink); font-family: var(--sans); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .c-note { fill: var(--ink-2); font-family: var(--sans); font-size: 13px; }
-
 
 .figs { display: grid; gap: 10px; }
 details.fig { background: var(--surface); border: 1px solid var(--grid); border-radius: 4px; font-size: 0.95rem; }
@@ -164,108 +192,93 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
 .fig-tools button:hover { border-color: var(--s1); }
 
 @media (max-width: 560px) {
-  body { font-size: 17px; }
+  body { font-size: 17px; padding-inline: 16px; }
   h1 { font-size: 1.9rem; }
   h2 { font-size: 1.45rem; }
-  header { padding-block: 36px 24px; }
+  header { padding-block: 32px 16px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
 <main>
 <header>
-  <p class="eyebrow">Progress report · September 2026</p>
+  <p class="eyebrow">Progress report · October 2026</p>
   <h1>India Rainfall 3D U-Net</h1>
-  <p class="lede" style="margin-top:14px">Correcting ECMWF's 32-day rainfall forecasts over India with a 3D U-Net, and checking honestly how much it helps.</p>
+  <p class="lede" style="margin-top:14px">Correcting ECMWF's 32-day rainfall forecasts over India, and checking honestly how much it helps.</p>
 </header>
+
+<nav class="tabs" role="tablist" aria-label="Report pages">
+  <button type="button" role="tab" id="tab-1" aria-controls="page-1" aria-selected="true">1 · Background and Experiments 1–8</button>
+  <button type="button" role="tab" id="tab-2" aria-controls="page-2" aria-selected="false">2 · Latest: Experiments 9–12<span class="tag">new best model</span></button>
+</nav>
+
+<!-- =============================================================== PAGE 1 -->
+<div class="page" id="page-1" role="tabpanel" aria-labelledby="tab-1">
 
 <section id="what">
   <h2>What we are doing</h2>
-  <p>ECMWF publishes a rainfall forecast for the next 32 days. Beyond the first week it is not very accurate. We train a neural network to take ECMWF's forecast and output a <strong>corrected forecast</strong>, and check it against rain actually observed by the India Meteorological Department (IMD).</p>
-  <p>The network is a 3D U-Net ported from a published model for the western US (<a href="https://gmd.copernicus.org/articles/19/27/2026/">Ryu et al. 2026</a>; <a href="https://github.com/W-US-BCSR/IRnAF">their code</a>). The main findings so far:</p>
+  <p>ECMWF publishes a rainfall forecast for the next 32 days. Beyond the first week it is not very accurate. We train a neural network to turn ECMWF's forecast into a <strong>corrected forecast</strong>, and check it against rain observed by the India Meteorological Department (IMD).</p>
+  <p>The network is a 3D U-Net ported from a published model for the western US (<a href="https://gmd.copernicus.org/articles/19/27/2026/">Ryu et al. 2026</a>; <a href="https://github.com/W-US-BCSR/IRnAF">their code</a>). Findings from Experiments 1–8:</p>
   <ul>
-    <li>The model beats raw ECMWF and bias-corrected ECMWF at every forecast day.</li>
-    <li>The standard score overstates skill. A forecast that just predicts the long-term average beats raw ECMWF on it, so we also score with the average removed.</li>
-    <li>Predicting the <em>departure from normal</em> instead of rain directly gives a real gain: +0.027 correlation with climatology removed, confirmed over 3 training runs each. Adding a "trust gate" on top adds nothing.</li>
-    <li>The model's rainfall maps are too flat: they carry about half the real variability.</li>
-    <li>12 of the 17 inputs add nothing measurable, and neither does the day-of-year input (3 seeds each).</li>
+    <li>On daily rainfall maps the model beats raw and debiased ECMWF at every forecast day.</li>
+    <li>The standard score overstates skill: predicting the long-term average beats raw ECMWF on it, so we also score with the average removed.</li>
+    <li>Predicting the <em>departure from normal</em> gives a real gain on daily maps (+0.026, 3 runs each), but not on weekly totals.</li>
+    <li>The model's maps are too flat (about a third of the real variability) and about 1.5 mm/day too dry.</li>
+    <li>None of the extra inputs tested helps: the 12 atmospheric fields, yesterday's observed rain, the day of year.</li>
   </ul>
+  <div class="callout win"><strong>Newest result, on page 2.</strong> A simple bias correction (Dyn++) beats every model on this page on weekly totals. A U-Net that corrects Dyn++ and is trained on real rain amounts (<code>residual_mm</code>) beats Dyn++ in every week, and is now our best model. <a href="#latest" data-goto="2">Go to page 2 →</a></div>
+</section>
+
+<section id="align">
+  <h2>All numbers are on correctly aligned days</h2>
+  <p>IMD labels each day's rain by the morning its 24-hour window <em>ends</em> (08:30 IST). ECMWF's first forecast day therefore matches IMD's <strong>next</strong> day, not the issue day. Our first scores compared each ECMWF day with the IMD day before it. We fixed this and rescored every saved run: forecast day <em>d</em> is now compared with IMD date issue + <em>d</em>, over 31 scoreable days.</p>
+  <p>Every conclusion survived except one: the small gain from yesterday's observed rain (Experiment 6) disappeared. The numbers below are the aligned ones.</p>
 </section>
 
 <section id="io">
   <h2>Inputs and outputs</h2>
-  <p>Each training example is one ECMWF forecast, identified by the date it was issued. The model sees ECMWF's forecast for the next 32 days plus one real observation, and outputs corrected daily rainfall for the same 32 days.</p>
-
+  <p>Each example is one ECMWF forecast, identified by its issue date. The model sees ECMWF's forecast for the next 32 days and outputs corrected daily rainfall for the same days.</p>
   <figure>
     <div class="diagram">
-      <svg viewBox="0 0 880 250" role="img" aria-label="Flowchart: ECMWF forecast, IMD rain from yesterday and the calendar go into the 3D U-Net, which outputs corrected rain for 32 days, compared against IMD observed rain.">
+      <svg viewBox="0 0 880 250" role="img" aria-label="Flowchart: ECMWF forecast, the calendar and (in early experiments) yesterday's IMD rain go into the 3D U-Net, which outputs corrected rain for 32 days, scored against IMD observed rain.">
         <defs>
           <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M0,0 L10,5 L0,10 z"/></marker>
         </defs>
         <rect class="d-box" x="10" y="14" width="270" height="70" rx="4"/>
         <text class="d-tb" x="24" y="42">ECMWF forecast, next 32 days</text>
         <text class="d-s" x="24" y="64">rain, humidity, winds, pressure, SST</text>
-
         <rect class="d-box" x="10" y="98" width="270" height="56" rx="4"/>
-        <text class="d-tb" x="24" y="122">IMD observed rain</text>
-        <text class="d-s" x="24" y="142">the day before the forecast only</text>
-
-        <rect class="d-box" x="10" y="168" width="270" height="56" rx="4"/>
-        <text class="d-tb" x="24" y="192">Calendar</text>
-        <text class="d-s" x="24" y="212">day of year</text>
-
+        <text class="d-tb" x="24" y="122">Calendar</text>
+        <text class="d-s" x="24" y="142">day of year</text>
+        <rect class="d-box" x="10" y="168" width="270" height="56" rx="4" style="stroke-dasharray:5 4"/>
+        <text class="d-tb" x="24" y="192">Yesterday's IMD rain</text>
+        <text class="d-s" x="24" y="212">Experiments 1–5 only, then dropped</text>
         <path class="d-line" d="M280,49 L318,49 L318,119 L346,119" marker-end="url(#ah)"/>
         <path class="d-line" d="M280,126 L346,126" marker-end="url(#ah)"/>
-        <path class="d-line" d="M280,196 L318,196 L318,133 L346,133" marker-end="url(#ah)"/>
-
+        <path class="d-dash" d="M280,196 L318,196 L318,133 L346,133" marker-end="url(#ah)"/>
         <rect class="d-key" x="350" y="92" width="150" height="68" rx="4"/>
         <text class="d-tb" x="425" y="122" text-anchor="middle">3D U-Net</text>
         <text class="d-s" x="425" y="142" text-anchor="middle">22.4 M parameters</text>
-
         <path class="d-line" d="M500,126 L556,126" marker-end="url(#ah)"/>
-
         <rect class="d-box" x="560" y="92" width="306" height="68" rx="4"/>
         <text class="d-tb" x="576" y="120">Corrected daily rainfall</text>
         <text class="d-s" x="576" y="142">one map per day, next 32 days</text>
-
         <path class="d-dash" d="M713,160 L713,184" marker-end="url(#ah)"/>
         <rect class="d-box" x="560" y="188" width="306" height="50" rx="4"/>
         <text class="d-t" x="576" y="218">Scored against IMD observed rain</text>
       </svg>
     </div>
-    <figcaption>Everything from ECMWF is a forecast for a future day. The only real observation the model sees is IMD rain from the day before the forecast. It never sees observations from the 32 days it predicts.</figcaption>
+    <figcaption>The headline model uses 16 inputs: 14 ECMWF fields and 2 calendar channels. Observed rain would not be available at forecast time, so IMD is used only as the training target and for scoring.</figcaption>
   </figure>
-
-  <h3>One example: forecast issued 11 Jan 2015</h3>
   <div class="scroll">
     <table>
-      <thead><tr><th>Channel</th><th>What it contains</th><th>Dates covered</th></tr></thead>
+      <thead><tr><th>Shape</th><th>Meaning</th></tr></thead>
       <tbody>
-        <tr><td>1–2</td><td>ECMWF rain forecast: average of its 11 ensemble runs, and how much they disagree</td><td>11 Jan → 11 Feb</td></tr>
-        <tr><td>3–14</td><td>ECMWF forecasts of humidity (4 heights), winds (4), sea-level pressure, geopotential height (2), sea-surface temperature</td><td>11 Jan → 11 Feb</td></tr>
-        <tr><td>15</td><td>IMD observed rain, copied into all 32 days</td><td>10 Jan only</td></tr>
-        <tr><td>16–17</td><td>Day of year (sine and cosine)</td><td>11 Jan → 11 Feb</td></tr>
-        <tr class="hl"><td>Output</td><td>Corrected daily rainfall, mm/day</td><td>11 Jan → 11 Feb</td></tr>
-        <tr><td>Truth</td><td>IMD observed daily rainfall</td><td>11 Jan → 11 Feb</td></tr>
+        <tr><td class="mono" style="white-space:nowrap">16 × 32 × 48 × 64</td><td>input: channels × forecast days × grid rows × columns. Each cell is 1.5° (about 165 km).</td></tr>
+        <tr><td class="mono" style="white-space:nowrap">1 × 32 × 48 × 64</td><td>output: daily rain, mm/day. Only the 187 cells over Indian land are scored.</td></tr>
       </tbody>
     </table>
   </div>
-
-  <h3>What the shape numbers mean</h3>
-  <p>The input has shape <code>17 × 32 × 48 × 64</code> and the output <code>1 × 32 × 48 × 64</code>:</p>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Number</th><th>Meaning</th></tr></thead>
-      <tbody>
-        <tr><td class="mono" style="white-space:nowrap">17 / 1</td><td>channels: different quantities (17 inputs, 1 output: rainfall)</td></tr>
-        <tr><td class="mono">32</td><td>forecast days, one map per day</td></tr>
-        <tr><td class="mono" style="white-space:nowrap">48 × 64</td><td>grid rows × columns. Each cell is 1.5° (about 165 km). The real area is 40 × 60 (39°N to 19.5°S, 21°E to 109.5°E), padded so it halves cleanly three times.</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p>Only the 187 grid cells over Indian land are scored, because that is where IMD has observations.</p>
-
-  <h3>Data split</h3>
   <div class="scroll">
     <table>
       <thead><tr><th>Use</th><th>Years</th><th class="n">Forecasts</th></tr></thead>
@@ -280,26 +293,23 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
 
 <section id="model">
   <h2>The model</h2>
-  <p>"3D" here means <strong>forecast day × latitude × longitude</strong>. One network sees all 32 days at once, so what it sees at days 1–20 can inform its correction at day 21. The network shrinks the data three times to find large-scale patterns, then expands it back, with skip connections carrying fine detail across.</p>
+  <p>"3D" means <strong>forecast day × latitude × longitude</strong>: one network sees all 32 days at once. It shrinks the data three times to find large-scale patterns, then expands it back, with skip connections carrying fine detail across.</p>
   <figure>
     <div class="diagram">
       <svg viewBox="0 0 880 340" role="img" aria-label="U-shaped diagram of the 3D U-Net: three encoder blocks shrink the data from 32 by 48 by 64 to a 4 by 6 by 8 bottleneck, three decoder blocks expand it back, with skip connections between matching levels.">
         <defs>
           <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M0,0 L10,5 L0,10 z"/></marker>
         </defs>
-        <!-- left column -->
         <rect class="d-box" x="20" y="10" width="260" height="44" rx="4"/>
-        <text class="d-tb" x="34" y="37">Input</text><text class="d-m" x="266" y="37" text-anchor="end">17 ch · 32×48×64</text>
+        <text class="d-tb" x="34" y="37">Input</text><text class="d-m" x="266" y="37" text-anchor="end">16 ch · 32×48×64</text>
         <rect class="d-box" x="20" y="76" width="260" height="44" rx="4"/>
         <text class="d-tb" x="34" y="103">Encoder 1</text><text class="d-m" x="266" y="103" text-anchor="end">64 ch · 32×48×64</text>
         <rect class="d-box" x="20" y="142" width="260" height="44" rx="4"/>
         <text class="d-tb" x="34" y="169">Encoder 2</text><text class="d-m" x="266" y="169" text-anchor="end">128 ch · 16×24×32</text>
         <rect class="d-box" x="20" y="208" width="260" height="44" rx="4"/>
         <text class="d-tb" x="34" y="235">Encoder 3</text><text class="d-m" x="266" y="235" text-anchor="end">256 ch · 8×12×16</text>
-        <!-- bottleneck -->
         <rect class="d-key" x="310" y="278" width="260" height="44" rx="4"/>
         <text class="d-tb" x="324" y="305">Bottleneck</text><text class="d-m" x="556" y="305" text-anchor="end">512 ch · 4×6×8</text>
-        <!-- right column -->
         <rect class="d-box" x="600" y="208" width="260" height="44" rx="4"/>
         <text class="d-tb" x="614" y="235">Decoder 1</text><text class="d-m" x="846" y="235" text-anchor="end">256 ch · 8×12×16</text>
         <rect class="d-box" x="600" y="142" width="260" height="44" rx="4"/>
@@ -308,17 +318,14 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
         <text class="d-tb" x="614" y="103">Decoder 3</text><text class="d-m" x="846" y="103" text-anchor="end">64 ch · 32×48×64</text>
         <rect class="d-key" x="600" y="10" width="260" height="44" rx="4"/>
         <text class="d-tb" x="614" y="37">Output: rainfall</text><text class="d-m" x="846" y="37" text-anchor="end">1 ch · 32×48×64</text>
-        <!-- down arrows -->
         <path class="d-line" d="M150,54 L150,74" marker-end="url(#ah2)"/>
         <path class="d-line" d="M150,120 L150,140" marker-end="url(#ah2)"/>
         <path class="d-line" d="M150,186 L150,206" marker-end="url(#ah2)"/>
         <path class="d-line" d="M150,252 L150,300 L306,300" marker-end="url(#ah2)"/>
-        <!-- up arrows -->
         <path class="d-line" d="M570,300 L730,300 L730,254" marker-end="url(#ah2)"/>
         <path class="d-line" d="M730,208 L730,188" marker-end="url(#ah2)"/>
         <path class="d-line" d="M730,142 L730,122" marker-end="url(#ah2)"/>
         <path class="d-line" d="M730,76 L730,56" marker-end="url(#ah2)"/>
-        <!-- skips -->
         <path class="d-dash" d="M280,98 L596,98" marker-end="url(#ah2)"/>
         <path class="d-dash" d="M280,164 L596,164" marker-end="url(#ah2)"/>
         <path class="d-dash" d="M280,230 L596,230" marker-end="url(#ah2)"/>
@@ -327,15 +334,13 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
         <text class="d-s" x="720" y="282" text-anchor="end">expand ×2 (up-convolution)</text>
       </svg>
     </div>
-    <figcaption>Our version of the architecture, with our sizes. "ch" is the number of channels; the three numbers are forecast days × rows × columns. The original diagram is Figure 1 of <a href="https://gmd.copernicus.org/articles/19/27/2026/">the reference paper</a>.</figcaption>
+    <figcaption>"ch" is the number of channels; the three numbers are forecast days × rows × columns. Original diagram: Figure 1 of <a href="https://gmd.copernicus.org/articles/19/27/2026/">the reference paper</a>.</figcaption>
   </figure>
   <ul>
-    <li>Each block: two rounds of 3×3×3 convolution, normalisation and activation.</li>
-    <li>Loss: squared error + (1 − pattern correlation), over Indian land cells only.</li>
-    <li>Training: Adam optimiser, stops when the validation score has not improved for 10 epochs.</li>
-    <li>Scaling: inputs are rescaled to average 0, spread 1, using training years only. The paper's code computes this scaling over training, validation and test years together; we changed that when porting.</li>
+    <li>Loss: squared error + (1 − pattern correlation), on log(1 + rain), Indian land cells only.</li>
+    <li>Training stops when the validation score has not improved for 10 epochs; inputs are rescaled with training years only.</li>
+    <li>22.4 million parameters and 724 training examples, so it overfits early: the best epoch is usually 4–7.</li>
   </ul>
-  <p>The model has 22.4 million parameters and 724 training examples, so it overfits early. The best epoch is usually 4–7.</p>
 </section>
 
 <section id="score">
@@ -344,261 +349,163 @@ details.fig p { font-size: 0.92rem; color: var(--ink-2); max-width: 70ch; }
     <table>
       <thead><tr><th>Score</th><th>What it measures</th><th class="n">Perfect</th></tr></thead>
       <tbody>
-        <tr><td>Pattern correlation</td><td>Does the predicted rainfall map match the observed map? Our main score.</td><td class="n">1</td></tr>
-        <tr><td>RMSE</td><td>Average error in mm/day</td><td class="n">0</td></tr>
+        <tr><td>Pattern correlation</td><td>Does the predicted daily rainfall map match the observed map? (Experiments 1–8)</td><td class="n">1</td></tr>
+        <tr><td>Weekly correlation</td><td>The same on 7-day rain totals, the usual unit for 2–4 week forecasts (Experiments 9–10)</td><td class="n">1</td></tr>
+        <tr><td>RMSE</td><td>Average error, mm/day</td><td class="n">0</td></tr>
         <tr><td>E<sub>pre</sub></td><td>The paper's combined score of correlation and variability</td><td class="n">0</td></tr>
-        <tr><td>SD ratio</td><td>Variability of the prediction ÷ variability of reality. Below 1 means the map is too flat.</td><td class="n">1</td></tr>
+        <tr><td>SD ratio</td><td>Variability of the prediction ÷ variability of reality. Below 1 means too flat.</td><td class="n">1</td></tr>
       </tbody>
     </table>
   </div>
-  <p><strong>Climatology removed.</strong> Much of an Indian rainfall map is predictable from the calendar alone (the west coast is wet every July). So we also score after subtracting the long-term average for that date and place from both the prediction and the truth. What remains is the part a forecast has to actually predict.</p>
-  <p>The long-term average always uses <strong>earlier years only</strong>: a 2010 forecast uses 1951–2009, never later years.</p>
+  <p><strong>Climatology removed.</strong> Much of an Indian rainfall map is predictable from the calendar alone (the west coast is wet every July). So we also score after subtracting the long-term average for that date and place from both prediction and truth. The average always uses <strong>earlier years only</strong>.</p>
 </section>
 
 <section id="exp1">
   <p class="eyebrow">Experiment 1</p>
   <h2>More training data</h2>
-  <p>We trained the same model on 60, 250 and 724 forecasts.</p>
   <figure>
     <div class="chart" id="c-exp1"></div>
-    <figcaption>Pattern correlation at forecast day 1. The 724-forecast model is used as the Baseline from here on.</figcaption>
+    <figcaption>Pattern correlation at forecast day 1, models trained on 60, 250 and 724 forecasts.</figcaption>
   </figure>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Training forecasts</th><th class="n">Day-1 corr</th><th class="n">Corr gain over raw ECMWF, 32-day avg</th><th class="n">RMSE, mm/day</th><th class="n">Raw ECMWF RMSE</th></tr></thead>
-      <tbody>
-        <tr><td>60</td><td class="n">0.416</td><td class="n">+0.061</td><td class="n">7.08</td><td class="n">7.19</td></tr>
-        <tr><td>250</td><td class="n">0.470</td><td class="n">+0.074</td><td class="n">6.87</td><td class="n">7.19</td></tr>
-        <tr class="hl"><td>724 (Baseline)</td><td class="n">0.553</td><td class="n">+0.111</td><td class="n">6.37</td><td class="n">6.94</td></tr>
-      </tbody>
-      <caption>The 60 and 250 runs used a smaller 78-forecast test set, so compare RMSE only within a row.</caption>
-    </table>
-  </div>
-  <p>More data helps at every step, and the Baseline beats raw ECMWF on all 32 forecast days.</p>
+  <p>More data helps at every step. The 724-forecast model is the <strong>Baseline</strong> from here on. (Scored before the date fix; the 60 and 250 runs used a smaller 78-forecast test set, so they were not rescored.)</p>
 </section>
 
 <section id="exp2">
   <p class="eyebrow">Experiment 2</p>
   <h2>Honest scoring</h2>
-  <p>We added two reference forecasts: <strong>climatology</strong> (always predict the long-term average for that date and place, so no forecasting at all) and <strong>debiased ECMWF</strong> (ECMWF with its usual bias for each date and forecast day removed).</p>
+  <p>Two reference forecasts: <strong>climatology</strong> (always predict the long-term average, so no forecasting at all) and <strong>debiased ECMWF</strong> (ECMWF with its usual bias for each date and forecast day removed).</p>
   <div class="scroll">
     <table>
       <thead><tr><th>Forecast</th><th class="n">Corr, standard</th><th class="n">Corr, climatology removed</th><th class="n">RMSE, mm/day</th></tr></thead>
       <tbody>
-        <tr><td>Raw ECMWF</td><td class="n">0.329</td><td class="n">0.183</td><td class="n">6.94</td></tr>
+        <tr><td>Raw ECMWF</td><td class="n">0.346</td><td class="n">0.205</td><td class="n">6.84</td></tr>
         <tr class="hl"><td>Climatology (no forecast)</td><td class="n">0.361</td><td class="n">0.000</td><td class="n">6.85</td></tr>
-        <tr><td>Debiased ECMWF</td><td class="n">0.353</td><td class="n">0.222</td><td class="n">6.62</td></tr>
-        <tr><td>Baseline model</td><td class="n">0.440</td><td class="n">0.332</td><td class="n">6.37</td></tr>
+        <tr><td>Debiased ECMWF</td><td class="n">0.371</td><td class="n">0.246</td><td class="n">6.52</td></tr>
+        <tr><td>Baseline model</td><td class="n">0.436</td><td class="n">0.325</td><td class="n">6.40</td></tr>
       </tbody>
-      <caption>Averages over all 32 forecast days, 153 test forecasts (2021–2023).</caption>
+      <caption>Averages over 31 aligned forecast days, 153 test forecasts (2021–2023).</caption>
     </table>
   </div>
-  <div class="callout"><strong>Climatology beats raw ECMWF on the standard score.</strong> The standard score partly rewards knowing the season. With climatology removed, the Baseline's real skill is 0.332. That is lower, but still clearly above every reference forecast.</div>
+  <div class="callout"><strong>Climatology beats raw ECMWF on the standard score.</strong> That score partly rewards knowing the season. With climatology removed, the Baseline's real skill on daily maps is 0.325, still clearly above every reference.</div>
   <figure>
     <div class="legend" id="lg-exp2"></div>
     <div class="chart" id="c-exp2"></div>
-    <figcaption>Pattern correlation with climatology removed, by forecast day. Climatology scores 0 on this scale by construction. Hover for values.</figcaption>
-    <details>
-      <summary>Show numbers</summary>
-      <div class="scroll">
-        <table>
-          <thead><tr><th>Forecast</th><th class="n">Day 1</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th><th class="n">Day 32</th></tr></thead>
-          <tbody>
-            <tr><td>Raw ECMWF</td><td class="n">0.436</td><td class="n">0.375</td><td class="n">0.174</td><td class="n">0.091</td><td class="n">0.032</td><td class="n">0.029</td></tr>
-            <tr><td>Debiased ECMWF</td><td class="n">0.466</td><td class="n">0.415</td><td class="n">0.210</td><td class="n">0.120</td><td class="n">0.060</td><td class="n">0.057</td></tr>
-            <tr><td>Baseline model</td><td class="n">0.556</td><td class="n">0.545</td><td class="n">0.318</td><td class="n">0.216</td><td class="n">0.148</td><td class="n">0.145</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </details>
+    <figcaption>Pattern correlation with climatology removed, by forecast day. Hover for values.</figcaption>
   </figure>
 </section>
 
 <section id="exp3">
   <p class="eyebrow">Experiment 3</p>
   <h2>Predicting the departure from normal</h2>
-  <p>Instead of drawing the whole rainfall map from scratch, the model predicts how far the rain will <strong>depart from normal</strong> for that date and place. The normal is then added back.</p>
-  <p>Every quantity is per grid cell and per forecast day. Rain is handled as <code>log(1 + rain)</code>, so the departures are departures in log-rain.</p>
-  <pre class="formula">obs        = log(1 + IMD observed rain)                      what we score against
-ecmwf      = log(1 + ECMWF rain, average of 11 members)
-normal     = average of obs for this day of year,  years before this one only
-ecmwf_usual= average of ecmwf for this issue date and forecast day,  earlier years only
-
-obs_dev    = (obs − normal) / σ_obs                           how unusual the real rain was
-ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECMWF says it will be
-             σ_obs, σ_ecmwf = one spread number each, from training years</pre>
+  <p>Instead of drawing the whole rainfall map, the model predicts how far rain will <strong>depart from normal</strong> for that date and place; the normal is then added back. Rain is handled as log(1 + rain).</p>
+  <pre class="formula">target      = (obs − normal) / σ_obs          how unusual the real rain was
+ECMWF input = (ecmwf − ecmwf_usual) / σ_ecmwf  how unusual ECMWF says it will be
+prediction  = exp(normal + σ_obs × output) − 1   normals: earlier years only</pre>
   <div class="scroll">
     <table>
-      <thead><tr><th>Version</th><th>ECMWF rain enters as</th><th>Network learns to output</th><th>Predicted rain (mm/day)</th></tr></thead>
+      <thead><tr><th>Version, 3 seeds each</th><th class="n">Corr, clim. removed</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th><th class="n">Corr, standard</th><th class="n">RMSE</th></tr></thead>
       <tbody>
-        <tr><td>Baseline</td><td>raw rain, rescaled to mean 0, spread 1</td><td>one map <code>r</code> = rescaled <code>obs</code></td><td><code>exp(r × spread + mean) − 1</code></td></tr>
-        <tr><td>Departure from normal</td><td><code>ecmwf_dev</code></td><td>one map <code>d</code> ≈ <code>obs_dev</code></td><td><code>exp(normal + σ_obs × d) − 1</code></td></tr>
+        <tr><td>Baseline (17 inputs)</td><td class="n">0.315 (0.305–0.323)</td><td class="n">0.486</td><td class="n">0.308</td><td class="n">0.163</td><td class="n">0.137</td><td class="n">0.440</td><td class="n">6.42</td></tr>
+        <tr class="hl"><td>Departure from normal</td><td class="n">0.340 (0.335–0.343)</td><td class="n">0.506</td><td class="n">0.312</td><td class="n">0.222</td><td class="n">0.174</td><td class="n">0.438</td><td class="n">6.43</td></tr>
       </tbody>
+      <caption>Mean of 3 seeds, brackets = lowest–highest seed. Gain +0.026, 95% range +0.015 to +0.037 (paired bootstrap).</caption>
     </table>
   </div>
-  <p>Both use the same U-Net and the same 17 inputs. In the departure version the normal is subtracted from the target before training and <strong>added back</strong> after the network runs, and ECMWF rain and yesterday's rain are given as departures from their own usual values. The loss (MSE + 1 − pattern correlation, Indian land cells only, all 32 forecast days) is computed on what the network outputs. Subtracting ECMWF's usual forecast from the input but adding the <em>observed</em> normal back to the output also removes ECMWF's average bias.</p>
-  <p>The departure version uses 672 training forecasts: 2004 has no earlier years of ECMWF forecasts to build <code>ecmwf_usual</code> from, so it was dropped. The Baseline uses all 724. Each version was trained <strong>three times</strong> with different random seeds.</p>
-  <figure>
-    <div class="chart" id="c-exp3"></div>
-    <figcaption>Pattern correlation with climatology removed, average over 32 forecast days and over 3 training runs (seeds 0, 1, 2), 153 test forecasts.</figcaption>
-  </figure>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Version</th><th class="n">Corr, clim. removed</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th><th class="n">Corr, standard</th><th class="n">RMSE, mm/day</th></tr></thead>
-      <tbody>
-        <tr><td>Baseline (predicts rain directly)</td><td class="n">0.322 (0.313–0.329)</td><td class="n">0.543</td><td class="n">0.314</td><td class="n">0.199</td><td class="n">0.125</td><td class="n">0.443</td><td class="n">6.39</td></tr>
-        <tr class="hl"><td>Departure from normal</td><td class="n">0.348 (0.343–0.351)</td><td class="n">0.560</td><td class="n">0.319</td><td class="n">0.221</td><td class="n">0.166</td><td class="n">0.442</td><td class="n">6.40</td></tr>
-      </tbody>
-      <caption>Mean of 3 seeds; brackets give the lowest and highest seed. Day columns are climatology-removed correlation.</caption>
-    </table>
-  </div>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Comparison</th><th class="n">Difference</th><th class="n">95% range</th><th>Seeds overlap?</th><th>Real?</th></tr></thead>
-      <tbody>
-        <tr class="hl"><td>Departure from normal vs Baseline</td><td class="n">+0.027</td><td class="n">+0.016 to +0.038</td><td>no</td><td>yes</td></tr>
-      </tbody>
-      <caption>Climatology-removed correlation. Paired bootstrap over the 153 test forecasts on 3-seed averages, 10,000 resamples.</caption>
-    </table>
-  </div>
-  <p><strong>Predicting the departure from normal is a real gain: +0.027.</strong> All three of its runs (0.343–0.351) beat all three Baseline runs (0.313–0.329), and the gain grows with forecast day (+0.04 at day 28). It does this with fewer training forecasts (672 vs 724). On the standard score and RMSE the two are the same, so the gain is in placing wetter- and drier-than-normal areas, not in the overall map or the size of the error.</p>
-  <div class="callout"><strong>Note: a "trust gate" was tried and dropped.</strong> We also tried letting the network output a gate between 0 and 1 that sets how much of ECMWF's departure to pass through (<code>d = gate × ecmwf_dev + correction</code>). Over 3 seeds it scored 0.350, the same as the plain departure model (+0.001, 95% range −0.002 to +0.005). An earlier single run had credited it with +0.014; that was a lucky seed.</div>
+  <p><strong>A real gain on daily maps:</strong> every departure run beats every Baseline run, and the gain grows with lead. <strong>But not on weekly totals:</strong> scored as in Experiment 9, it ties the Baseline in weeks 1–2 and is worse in weeks 3–4 (−0.03 to −0.04). A "trust gate" variant added nothing (+0.001).</p>
 </section>
 
 <section id="exp4">
   <p class="eyebrow">Experiment 4</p>
-  <h2>Weekly scores and the paper's metric</h2>
-  <p>Baseline model at forecast days 7, 14, 21 and 28 (weeks 1–4), standard scoring:</p>
+  <h2>The paper's metric, and flat maps</h2>
   <div class="scroll">
     <table>
-      <thead><tr><th>Score</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th></tr></thead>
+      <thead><tr><th>Baseline model</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th></tr></thead>
       <tbody>
-        <tr><td>Pattern correlation</td><td class="n">0.538</td><td class="n">0.419</td><td class="n">0.388</td><td class="n">0.378</td></tr>
-        <tr><td>RMSE, mm/day</td><td class="n">6.11</td><td class="n">6.63</td><td class="n">6.80</td><td class="n">6.85</td></tr>
-        <tr><td>E<sub>pre</sub> (0 = perfect)</td><td class="n">2.08</td><td class="n">2.97</td><td class="n">3.22</td><td class="n">3.29</td></tr>
-        <tr class="hl"><td>SD ratio (1 = right)</td><td class="n">0.65</td><td class="n">0.44</td><td class="n">0.86</td><td class="n">0.46</td></tr>
+        <tr><td>Pattern correlation</td><td class="n">0.508</td><td class="n">0.423</td><td class="n">0.374</td><td class="n">0.374</td></tr>
+        <tr><td>RMSE, mm/day</td><td class="n">6.11</td><td class="n">6.50</td><td class="n">6.65</td><td class="n">6.72</td></tr>
+        <tr><td>E<sub>pre</sub> (0 = perfect)</td><td class="n">2.17</td><td class="n">2.99</td><td class="n">3.11</td><td class="n">3.27</td></tr>
+        <tr class="hl"><td>SD ratio (1 = right), median</td><td class="n">0.39</td><td class="n">0.29</td><td class="n">0.28</td><td class="n">0.27</td></tr>
       </tbody>
     </table>
   </div>
-  <div class="callout"><strong>The predicted maps are too flat.</strong> Across the map, they vary about half as much as the observed rainfall does. The paper reports the same problem for rain in mountain terrain. The squared-error loss pushes the model to hedge toward the average.</div>
+  <div class="callout"><strong>The predicted maps are too flat.</strong> They carry about a third of the real variability. (An earlier version averaged the SD ratio over forecasts and reported about half; a few near-dry days with ratios above 200 inflated that average, so the median is used.) We also fixed a bug in our E<sub>pre</sub> port, which gave 1.386 for a perfect forecast.</div>
 </section>
 
 <section id="exp5">
   <p class="eyebrow">Experiment 5</p>
   <h2>Which inputs matter</h2>
-  <p>The paper tested whether extra weather variables help. We repeated this by adding input groups one at a time, with the same random seed and all 724 training forecasts.</p>
-  <figure>
-    <div class="chart" id="c-exp5"></div>
-    <figcaption>Pattern correlation, standard scoring, average over 32 forecast days. The shaded band spans two training runs of the identical 17-input setup (0.440 and 0.444).</figcaption>
-  </figure>
+  <p>Input groups added one at a time, same seed, all 724 training forecasts.</p>
   <div class="scroll">
     <table>
-      <thead><tr><th>Inputs</th><th class="n">Channels</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th><th class="n">Avg corr</th><th class="n">Avg RMSE</th></tr></thead>
+      <thead><tr><th>Inputs</th><th class="n">Channels</th><th class="n">Corr, standard</th><th class="n">Corr, clim. removed</th><th class="n">RMSE</th></tr></thead>
       <tbody>
-        <tr><td>Rain forecast, spread, yesterday's rain, calendar</td><td class="n">5</td><td class="n">0.533</td><td class="n">0.419</td><td class="n">0.399</td><td class="n">0.383</td><td class="n">0.442</td><td class="n">6.47</td></tr>
-        <tr><td>+ humidity</td><td class="n">9</td><td class="n">0.535</td><td class="n">0.422</td><td class="n">0.387</td><td class="n">0.384</td><td class="n">0.442</td><td class="n">6.43</td></tr>
-        <tr><td>+ winds</td><td class="n">13</td><td class="n">0.532</td><td class="n">0.429</td><td class="n">0.392</td><td class="n">0.381</td><td class="n">0.441</td><td class="n">6.34</td></tr>
-        <tr><td>+ pressure, heights, SST (all)</td><td class="n">17</td><td class="n">0.542</td><td class="n">0.428</td><td class="n">0.393</td><td class="n">0.385</td><td class="n">0.444</td><td class="n">6.48</td></tr>
+        <tr><td>Rain forecast, spread, yesterday's rain, calendar</td><td class="n">5</td><td class="n">0.439</td><td class="n">0.321</td><td class="n">6.49</td></tr>
+        <tr><td>+ humidity</td><td class="n">9</td><td class="n">0.439</td><td class="n">0.331</td><td class="n">6.45</td></tr>
+        <tr><td>+ winds</td><td class="n">13</td><td class="n">0.438</td><td class="n">0.320</td><td class="n">6.36</td></tr>
+        <tr><td>+ pressure, heights, SST (all)</td><td class="n">17</td><td class="n">0.441</td><td class="n">0.323</td><td class="n">6.50</td></tr>
       </tbody>
+      <caption>31-day averages. Retraining the same setup moves these by up to 0.009, 0.018 and 0.15.</caption>
     </table>
   </div>
-  <p>All four are the same within retraining noise. The 12 atmospheric inputs add nothing measurable, which matches the paper's finding for the western US.</p>
+  <p>All four are the same within retraining noise: the 12 atmospheric inputs add nothing measurable, as in the paper. (On weekly totals the "+ winds" run scores best of Experiments 1–7, but it is a single run.)</p>
 </section>
 
 <section id="exp6">
   <p class="eyebrow">Experiment 6</p>
   <h2>Does yesterday's observed rain help?</h2>
-  <p>Yesterday's IMD rain is the only real observation among the inputs. The reference paper does not use one, and we found no paper recommending it. Every earlier model had it, so we trained the 17-input setup with and without it (same seed, same data).</p>
+  <p>The only real observation among the inputs. We trained the 17-input setup with and without it, <strong>3 seeds each</strong>.</p>
   <div class="scroll">
     <table>
-      <thead><tr><th>Score</th><th>Forecast days</th><th class="n">With</th><th class="n">Without</th><th class="n">Difference</th><th>Clear?</th></tr></thead>
+      <thead><tr><th>Score</th><th>Forecast days</th><th class="n">With</th><th class="n">Without</th><th class="n">With − without (95%)</th></tr></thead>
       <tbody>
-        <tr><td>Corr, standard</td><td>1–32</td><td class="n">0.443</td><td class="n">0.443</td><td class="n">0.000</td><td>no</td></tr>
-        <tr><td>Corr, clim. removed</td><td>1–3</td><td class="n">0.598</td><td class="n">0.603</td><td class="n">−0.005</td><td>no</td></tr>
-        <tr><td>Corr, clim. removed</td><td>15–32</td><td class="n">0.198</td><td class="n">0.180</td><td class="n">+0.018</td><td>yes</td></tr>
-        <tr class="hl"><td>Corr, clim. removed</td><td>1–32</td><td class="n">0.329</td><td class="n">0.317</td><td class="n">+0.011</td><td>yes</td></tr>
-        <tr><td>RMSE, mm/day</td><td>1–32</td><td class="n">6.47</td><td class="n">6.36</td><td class="n">+0.12</td><td>within retraining noise</td></tr>
+        <tr><td>Corr, standard</td><td>1–31</td><td class="n">0.440</td><td class="n">0.440</td><td class="n">+0.000 (−0.001, +0.002)</td></tr>
+        <tr><td>Corr, clim. removed</td><td>1–3</td><td class="n">0.639</td><td class="n">0.640</td><td class="n">−0.001 (−0.004, +0.002)</td></tr>
+        <tr><td>Corr, clim. removed</td><td>15–31</td><td class="n">0.176</td><td class="n">0.189</td><td class="n">−0.012 (−0.020, −0.005)</td></tr>
+        <tr class="hl"><td>Corr, clim. removed</td><td>1–31</td><td class="n">0.315</td><td class="n">0.322</td><td class="n">−0.007 (−0.012, −0.004)</td></tr>
+        <tr><td>RMSE, mm/day</td><td>1–31</td><td class="n">6.42</td><td class="n">6.41</td><td class="n">+0.01</td></tr>
       </tbody>
-      <caption>Paired bootstrap over the 153 test forecasts. "Clear" covers only which test forecasts were drawn, not retraining noise (see Experiment 7). The RMSE gap matches the 0.11 mm/day difference between two training runs of the identical setup.</caption>
+      <caption>Seed range, climatology removed: with 0.305–0.323, without 0.311–0.329.</caption>
     </table>
   </div>
-  <p>It makes no difference on the standard score. With climatology removed it helps slightly, but only at weeks 3–5, not in the first days where it would be expected to matter most. The effect is small and rests on one run each. Experiment 7 found that retraining alone moves this score by up to 0.016, so the +0.011 is within noise.</p>
+  <p><strong>No measurable effect.</strong> A first single-run version suggested a small gain at long lead; with 3 seeds and aligned days it reverses and stays inside seed noise. Dropping it gives the 16-input headline model.</p>
 </section>
 
 <section id="exp7">
   <p class="eyebrow">Experiment 7</p>
-  <h2>Does the day-of-year input help? Three seeds each</h2>
-  <p>The reference paper gives its network only ECMWF forecasts. We also give it the day of the year (sin and cos, two channels). To see whether that helps, we trained the paper-style setup — the 14 ECMWF inputs only — and compared it with our 16-input headline model (the same 14 plus the two calendar channels). The historical mean was never an input, so there was nothing else to remove.</p>
-  <p>This is the first experiment where each setup was trained <strong>three times with different random seeds</strong> (seeds 0, 1, 2). Same 724 training forecasts, same 153 test forecasts.</p>
+  <h2>Does the day-of-year input help?</h2>
   <div class="scroll">
     <table>
-      <thead><tr><th>Score, 32-day average</th><th class="n">With calendar (16)</th><th class="n">Without (14)</th><th class="n">Difference</th></tr></thead>
+      <thead><tr><th>31-day average, 3 seeds each</th><th class="n">With calendar (16)</th><th class="n">Without (14)</th><th class="n">Difference</th></tr></thead>
       <tbody>
-        <tr><td>Corr, standard</td><td class="n">0.442 (0.439–0.444)</td><td class="n">0.442 (0.437–0.445)</td><td class="n">0.000</td></tr>
-        <tr><td>Corr, clim. removed</td><td class="n">0.327 (0.317–0.334)</td><td class="n">0.335 (0.326–0.341)</td><td class="n">−0.008</td></tr>
-        <tr><td>RMSE, mm/day</td><td class="n">6.40 (6.36–6.43)</td><td class="n">6.40 (6.38–6.43)</td><td class="n">0.00</td></tr>
-      </tbody>
-      <caption>Mean of 3 seeds; brackets give the lowest and highest seed.</caption>
-    </table>
-  </div>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Corr, standard</th><th class="n">Day 7</th><th class="n">Day 14</th><th class="n">Day 21</th><th class="n">Day 28</th></tr></thead>
-      <tbody>
-        <tr><td>With calendar</td><td class="n">0.539</td><td class="n">0.424</td><td class="n">0.391</td><td class="n">0.384</td></tr>
-        <tr><td>Without</td><td class="n">0.542</td><td class="n">0.422</td><td class="n">0.386</td><td class="n">0.378</td></tr>
+        <tr><td>Corr, standard</td><td class="n">0.440 (0.437–0.442)</td><td class="n">0.439 (0.434–0.443)</td><td class="n">+0.000</td></tr>
+        <tr><td>Corr, clim. removed</td><td class="n">0.322 (0.311–0.329)</td><td class="n">0.330 (0.320–0.336)</td><td class="n">−0.007</td></tr>
+        <tr><td>RMSE, mm/day</td><td class="n">6.41 (6.37–6.44)</td><td class="n">6.41 (6.39–6.45)</td><td class="n">−0.01</td></tr>
       </tbody>
     </table>
   </div>
-  <p><strong>The calendar adds nothing measurable.</strong> On the standard score and RMSE the two are identical. With climatology removed the model <em>without</em> it is 0.008 higher; a bootstrap over test forecasts calls that real (−0.013 to −0.003), but the three seeds of the same setup differ by up to 0.016, twice that gap, so we read it as no difference. ECMWF's own fields already carry the season, so a separate calendar signal is redundant.</p>
-
+  <p><strong>The calendar adds nothing:</strong> the −0.007 is smaller than the spread between seeds of one setup (up to 0.017). ECMWF's fields already carry the season.</p>
   <h3>How much to trust single runs</h3>
-  <p>A score can change for two reasons, and they need different checks:</p>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Source</th><th>What it is</th><th>How we measure it</th></tr></thead>
-      <tbody>
-        <tr><td>Which test forecasts</td><td>A different set of 153 forecasts would give slightly different scores</td><td>Bootstrap: resample the test forecasts 10,000 times, take the 95% range</td></tr>
-        <tr><td>Training randomness</td><td>Starting weights, dropout and batch order differ, so retraining the same setup gives a different model</td><td>Retrain with several seeds and look at the spread</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p>The bootstrap covers only the first. The three seeds above measure the second:</p>
   <div class="scroll">
     <table>
       <thead><tr><th>Score</th><th class="n">Spread across 3 seeds of one setup</th></tr></thead>
       <tbody>
-        <tr><td>Corr, standard</td><td class="n">0.005–0.009</td></tr>
-        <tr class="hl"><td>Corr, clim. removed</td><td class="n">0.015–0.016</td></tr>
-        <tr><td>RMSE, mm/day</td><td class="n">0.06–0.08</td></tr>
+        <tr><td>Corr, standard</td><td class="n">0.001–0.009</td></tr>
+        <tr class="hl"><td>Corr, clim. removed</td><td class="n">0.009–0.018</td></tr>
+        <tr><td>RMSE, mm/day</td><td class="n">0.05–0.15</td></tr>
       </tbody>
     </table>
   </div>
-  <p>Earlier experiments assumed a retraining noise of about 0.006, from one accidental repeat on the standard score. With climatology removed it is closer to 0.016. Large results stand: beating raw and debiased ECMWF (gap 0.11), the flat predictions, and more data helping. Small single-run gains on the climatology-removed score need repeating. Doing that for Experiment 3 showed the departure from normal is real (+0.027 over 3 seeds) and the gate is not (+0.001). Yesterday's rain (+0.011, Experiment 6) has not been repeated. A difference should count only if it is bigger than both the bootstrap range and the seed spread.</p>
+  <p>A difference counts only if it is larger than both the bootstrap range (which test forecasts were drawn) and this seed spread (training randomness).</p>
 </section>
 
 <section id="review">
-  <p class="eyebrow">Review response</p>
+  <p class="eyebrow">Experiment 8 · review response</p>
   <h2>Professor's comments</h2>
-  <p>Everything here uses the <strong>16-input model without yesterday's observed IMD rain</strong>. Observed IMD rain would not exist at forecast time, so it is no longer an input; IMD is used only as the training target and for scoring. Experiment 6 showed that removing it leaves the standard score unchanged (0.443 vs 0.443). Images are collapsed: click a heading to open one, or click an image to open it full size.</p>
-  <div class="fig-tools"><button type="button" id="figs-open">Open all images</button><button type="button" id="figs-close">Close all</button></div>
+  <p>All figures use the <strong>16-input model</strong> (no observed rain as input), on aligned days. Click a heading to open an image; click an image to open it full size.</p>
+  <div class="fig-tools"><button type="button" data-figs="review" data-open="1">Open all images</button><button type="button" data-figs="review" data-open="0">Close all</button></div>
 
   <h3>Which inputs feed one predicted value?</h3>
-  <p>The whole input block: 21–109.5°E, 19.5°S–39°N, all 32 forecast days and all 16 channels. The network is convolutional, so there is no hand-picked window. Three pooling steps let one coarse cell summarise 12° × 12° × 8 days, and skip connections add the fine local detail back. We measured the influence with gradients (day-14 output at Nagpur and Mumbai, averaged over the 153 test forecasts):</p>
-  <div class="scroll">
-    <table>
-      <thead><tr><th>Share of total influence</th><th class="n">Nagpur</th><th class="n">Mumbai</th></tr></thead>
-      <tbody>
-        <tr><td>within ±1 cell (1.5°)</td><td class="n">21%</td><td class="n">20%</td></tr>
-        <tr><td>within ±4 cells (6°)</td><td class="n">68%</td><td class="n">67%</td></tr>
-        <tr><td>within ±8 cells (12°)</td><td class="n">87%</td><td class="n">86%</td></tr>
-        <tr><td>from forecast days 11–17 (output is day 14)</td><td class="n">70%</td><td class="n">69%</td></tr>
-        <tr><td>from ECMWF rain mean</td><td class="n">20%</td><td class="n">20%</td></tr>
-        <tr><td>from each of the other 15 channels</td><td class="n">4–9%</td><td class="n">4–9%</td></tr>
-      </tbody>
-      <caption>Every input can influence the output, but most of the influence is within about 6° and three days. Gradient size shows sensitivity, not proven skill.</caption>
-    </table>
-  </div>
+  <p>The whole input block can, but most influence is local: gradients of the day-14 output at Nagpur and Mumbai show 67–68% of it within ±6° and about 70% from forecast days 11–17. ECMWF rain carries 20%; each other channel 4–9%.</p>
   <div class="figs">
     <details class="fig">
       <summary>Input sensitivity <span>where, when and which variable</span></summary>
@@ -610,13 +517,12 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
   </div>
 
   <h3>Learning curves</h3>
-  <p>Validation picks the stopping epoch, so test is shown as a single point at that epoch, not as a curve. After about epoch 7 the training loss keeps falling (0.95 to 0.60) while validation rises (0.96 to 1.11): the model overfits. At the chosen epoch the three losses are close: train 0.946, validation 0.961, test 0.979.</p>
+  <p>After about epoch 7 training loss keeps falling (0.95 → 0.60) while validation rises: the model overfits. At the chosen epoch: train 0.946, validation 0.961, test 0.979.</p>
   <div class="figs">
     <details class="fig">
       <summary>Learning curves <span>train, validation, test</span></summary>
       <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/01_learning_curves.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/01_learning_curves.png" alt="Learning curves"></a>
-      
+      <a href="experiments/exp08_review_diagnostics/figures/review_aligned/01_learning_curves.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/01_learning_curves.png" alt="Learning curves"></a>
       </div>
     </details>
   </div>
@@ -626,140 +532,95 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <table>
       <thead><tr><th>Forecast day</th><th class="n">Corr, U-Net / ECMWF</th><th class="n">Bias, mm/day, U-Net / ECMWF</th><th class="n">Slope, U-Net / ECMWF</th></tr></thead>
       <tbody>
-        <tr><td>7</td><td class="n">0.65 / 0.57</td><td class="n">−1.25 / −0.25</td><td class="n">0.30 / 0.35</td></tr>
-        <tr><td>14</td><td class="n">0.54 / 0.47</td><td class="n">−1.57 / −0.13</td><td class="n">0.20 / 0.26</td></tr>
-        <tr><td>21</td><td class="n">0.51 / 0.43</td><td class="n">−1.65 / −0.11</td><td class="n">0.17 / 0.23</td></tr>
-        <tr><td>28</td><td class="n">0.48 / 0.41</td><td class="n">−1.71 / −0.14</td><td class="n">0.15 / 0.21</td></tr>
+        <tr><td>7</td><td class="n">0.62 / 0.56</td><td class="n">−1.26 / −0.17</td><td class="n">0.26 / 0.35</td></tr>
+        <tr><td>14</td><td class="n">0.52 / 0.43</td><td class="n">−1.48 / −0.06</td><td class="n">0.19 / 0.24</td></tr>
+        <tr><td>21</td><td class="n">0.48 / 0.40</td><td class="n">−1.53 / +0.00</td><td class="n">0.16 / 0.21</td></tr>
+        <tr><td>28</td><td class="n">0.47 / 0.40</td><td class="n">−1.67 / −0.07</td><td class="n">0.14 / 0.21</td></tr>
       </tbody>
       <caption>Daily rain, every Indian land cell and every test forecast (28,611 points per day). A slope of 1 would be perfect.</caption>
     </table>
   </div>
-  <div class="callout"><strong>Two weaknesses are now visible.</strong> Both models squash the range (heavy rain of 40+ mm/day is predicted at about 10–18 mm/day), and the U-Net is too dry by 1.2–1.7 mm/day on average while raw ECMWF is nearly unbiased. A likely cause, not yet tested: the model works in log(1 + rain), and converting back under-estimates average rain.</div>
+  <div class="callout"><strong>Two weaknesses.</strong> Both models squash heavy rain (40+ mm/day is predicted at about 10–18), and the U-Net is 1.3–1.7 mm/day too dry while raw ECMWF is nearly unbiased. Page 2 traces the dryness to training in log(1 + rain) and fixes it.</div>
   <div class="figs">
     <details class="fig">
       <summary>Grid-cell scatter, mm/day <span>days 7/14/21/28, U-Net above ECMWF</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/02_scatter_gridcell.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/02_scatter_gridcell.png" alt="Observed vs predicted daily rain scatter"></a>
-      
-      </div>
+      <div class="body"><a href="experiments/exp08_review_diagnostics/figures/review_aligned/02_scatter_gridcell.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/02_scatter_gridcell.png" alt="Observed vs predicted daily rain scatter"></a></div>
     </details>
     <details class="fig">
       <summary>Grid-cell scatter, log scale <span>same data, log(1 + rain) axes</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/03_scatter_gridcell_logaxes.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/03_scatter_gridcell_logaxes.png" alt="Observed vs predicted scatter, log axes"></a>
-      
-      </div>
+      <div class="body"><a href="experiments/exp08_review_diagnostics/figures/review_aligned/03_scatter_gridcell_logaxes.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/03_scatter_gridcell_logaxes.png" alt="Observed vs predicted scatter, log axes"></a></div>
     </details>
     <details class="fig">
       <summary>All-India weekly mean scatter <span>one dot per test forecast</span></summary>
       <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/04_scatter_allindia_weekly.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/04_scatter_allindia_weekly.png" alt="All-India weekly mean scatter"></a>
-      <p>The weekly correlations look very high (0.92–0.98) mostly because of the seasonal cycle; climatology alone scores 0.90.</p>
+      <a href="experiments/exp08_review_diagnostics/figures/review_aligned/04_scatter_allindia_weekly.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/04_scatter_allindia_weekly.png" alt="All-India weekly mean scatter"></a>
+      <p>The weekly correlations look very high (0.91–0.98) mostly because of the seasonal cycle; climatology alone scores 0.90.</p>
       </div>
     </details>
   </div>
 
   <h3>Time series and test cases</h3>
-  <p>Cases were chosen by a rule (wettest, driest and median Jun–Aug period, plus the wettest in Mar–May, Oct–Dec and Dec–Feb), not by how good they look. The U-Net gets the pattern right in weeks 1–2 (issued 2022-07-01, week 1: map correlation 0.91 vs 0.73 for ECMWF) but predicts heavy rain at a third to a half of its observed size.</p>
+  <p>Cases were chosen by a rule (wettest, driest and median Jun–Aug period, plus the wettest Mar–May, Oct–Dec and Dec–Feb), not by how good they look.</p>
   <div class="scroll">
     <table>
-      <thead><tr><th>All-India weekly mean, departures from climatology</th><th class="n">Week 1</th><th class="n">Week 2</th><th class="n">Week 3</th><th class="n">Week 4</th></tr></thead>
+      <thead><tr><th>All-India weekly mean, departures from normal</th><th class="n">Week 1</th><th class="n">Week 2</th><th class="n">Week 3</th><th class="n">Week 4</th></tr></thead>
       <tbody>
-        <tr><td>U-Net</td><td class="n">0.63</td><td class="n">0.44</td><td class="n">0.24</td><td class="n">0.14</td></tr>
-        <tr><td>Raw ECMWF</td><td class="n">0.88</td><td class="n">0.81</td><td class="n">0.61</td><td class="n">0.42</td></tr>
+        <tr><td>U-Net (16 inputs)</td><td class="n">0.63</td><td class="n">0.42</td><td class="n">0.22</td><td class="n">0.11</td></tr>
+        <tr><td>Raw ECMWF</td><td class="n">0.89</td><td class="n">0.79</td><td class="n">0.56</td><td class="n">0.38</td></tr>
       </tbody>
-      <caption>Correlation after subtracting the 1951–2020 day-of-year normal. On the all-India amount raw ECMWF is better; the U-Net's advantage is the spatial pattern.</caption>
+      <caption>Correlation after subtracting the 1951–2020 normal. On the India-wide amount raw ECMWF is much better; the U-Net's advantage was the spatial pattern of daily maps.</caption>
     </table>
   </div>
   <div class="figs">
     <details class="fig">
-      <summary>All-India weekly series <span>weeks 1–4, 2021–2023, with climatology</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/05_timeseries_allindia_by_week.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/05_timeseries_allindia_by_week.png" alt="All-India weekly mean time series"></a>
-      
-      </div>
+      <summary>All-India weekly series <span>weeks 1–4, 2021–2023</span></summary>
+      <div class="body"><a href="experiments/exp08_review_diagnostics/figures/review_aligned/05_timeseries_allindia_by_week.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/05_timeseries_allindia_by_week.png" alt="All-India weekly mean time series"></a></div>
     </details>
     <details class="fig">
       <summary>City time series <span>Delhi, Mumbai, Kolkata, Chennai; weeks 1 and 3</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/06_timeseries_cities.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/06_timeseries_cities.png" alt="Single-cell weekly time series"></a>
-      
-      </div>
+      <div class="body"><a href="experiments/exp08_review_diagnostics/figures/review_aligned/06_timeseries_cities.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/06_timeseries_cities.png" alt="Single-cell weekly time series"></a></div>
     </details>
     <details class="fig">
-      <summary>Case time series <span>all-India mean over the 32 forecast days</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/07_case_timeseries_allindia.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/07_case_timeseries_allindia.png" alt="Case time series"></a>
-      
-      </div>
+      <summary>Case time series <span>all-India mean over the forecast days</span></summary>
+      <div class="body"><a href="experiments/exp08_review_diagnostics/figures/review_aligned/07_case_timeseries_allindia.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/07_case_timeseries_allindia.png" alt="Case time series"></a></div>
     </details>
     <details class="fig">
       <summary>Case maps <span>six test forecasts, weekly and daily</span></summary>
       <div class="body">
-    <details class="fig">
-      <summary>Wettest Jun–Aug period, issued 2022-07-01 <span>weekly and daily maps</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/09_case1_20220701_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/09_case1_20220701_weekly_maps.png" alt="Weekly-mean maps, Wettest Jun–Aug period, issued 2022-07-01"></a>
-      <a href="experiments/exp08_review_diagnostics/figures/review/08_case1_20220701_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/08_case1_20220701_daily_maps.png" alt="Daily maps, Wettest Jun–Aug period, issued 2022-07-01"></a>
-      <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image: weekly means for weeks 1–4. Second image: single days 7, 14, 21, 28.</p>
-      </div>
-    </details>
-    <details class="fig">
-      <summary>Driest Jun–Aug period, issued 2023-08-05 <span>weekly and daily maps</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/09_case2_20230805_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/09_case2_20230805_weekly_maps.png" alt="Weekly-mean maps, Driest Jun–Aug period, issued 2023-08-05"></a>
-      <a href="experiments/exp08_review_diagnostics/figures/review/08_case2_20230805_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/08_case2_20230805_daily_maps.png" alt="Daily maps, Driest Jun–Aug period, issued 2023-08-05"></a>
-      <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image: weekly means for weeks 1–4. Second image: single days 7, 14, 21, 28.</p>
-      </div>
-    </details>
-    <details class="fig">
-      <summary>Median Jun–Aug period, issued 2021-08-26 <span>weekly and daily maps</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/09_case3_20210826_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/09_case3_20210826_weekly_maps.png" alt="Weekly-mean maps, Median Jun–Aug period, issued 2021-08-26"></a>
-      <a href="experiments/exp08_review_diagnostics/figures/review/08_case3_20210826_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/08_case3_20210826_daily_maps.png" alt="Daily maps, Median Jun–Aug period, issued 2021-08-26"></a>
-      <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image: weekly means for weeks 1–4. Second image: single days 7, 14, 21, 28.</p>
-      </div>
-    </details>
-    <details class="fig">
-      <summary>Wettest Mar–May period, issued 2021-05-27 <span>weekly and daily maps</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/09_case4_20210527_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/09_case4_20210527_weekly_maps.png" alt="Weekly-mean maps, Wettest Mar–May period, issued 2021-05-27"></a>
-      <a href="experiments/exp08_review_diagnostics/figures/review/08_case4_20210527_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/08_case4_20210527_daily_maps.png" alt="Daily maps, Wettest Mar–May period, issued 2021-05-27"></a>
-      <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image: weekly means for weeks 1–4. Second image: single days 7, 14, 21, 28.</p>
-      </div>
-    </details>
-    <details class="fig">
-      <summary>Wettest Oct–Dec period, issued 2022-10-07 <span>weekly and daily maps</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/09_case5_20221007_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/09_case5_20221007_weekly_maps.png" alt="Weekly-mean maps, Wettest Oct–Dec period, issued 2022-10-07"></a>
-      <a href="experiments/exp08_review_diagnostics/figures/review/08_case5_20221007_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/08_case5_20221007_daily_maps.png" alt="Daily maps, Wettest Oct–Dec period, issued 2022-10-07"></a>
-      <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image: weekly means for weeks 1–4. Second image: single days 7, 14, 21, 28.</p>
-      </div>
-    </details>
-    <details class="fig">
-      <summary>Wettest Dec–Feb period, issued 2021-12-27 <span>weekly and daily maps</span></summary>
-      <div class="body">
-      <a href="experiments/exp08_review_diagnostics/figures/review/09_case6_20211227_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/09_case6_20211227_weekly_maps.png" alt="Weekly-mean maps, Wettest Dec–Feb period, issued 2021-12-27"></a>
-      <a href="experiments/exp08_review_diagnostics/figures/review/08_case6_20211227_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review/08_case6_20211227_daily_maps.png" alt="Daily maps, Wettest Dec–Feb period, issued 2021-12-27"></a>
-      <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image: weekly means for weeks 1–4. Second image: single days 7, 14, 21, 28.</p>
-      </div>
-    </details>
+        <p>Columns: IMD observed, raw ECMWF, U-Net, U-Net minus observed. First image of each case: weekly means; second: single days 7, 14, 21, 28.</p>
+        <details class="fig"><summary>Wettest Jun–Aug, issued 2022-07-01</summary><div class="body">
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/09_case1_20220701_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/09_case1_20220701_weekly_maps.png" alt="Weekly maps, issued 2022-07-01"></a>
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/08_case1_20220701_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/08_case1_20220701_daily_maps.png" alt="Daily maps, issued 2022-07-01"></a></div></details>
+        <details class="fig"><summary>Driest Jun–Aug, issued 2023-08-05</summary><div class="body">
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/09_case2_20230805_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/09_case2_20230805_weekly_maps.png" alt="Weekly maps, issued 2023-08-05"></a>
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/08_case2_20230805_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/08_case2_20230805_daily_maps.png" alt="Daily maps, issued 2023-08-05"></a></div></details>
+        <details class="fig"><summary>Median Jun–Aug, issued 2021-08-26</summary><div class="body">
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/09_case3_20210826_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/09_case3_20210826_weekly_maps.png" alt="Weekly maps, issued 2021-08-26"></a>
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/08_case3_20210826_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/08_case3_20210826_daily_maps.png" alt="Daily maps, issued 2021-08-26"></a></div></details>
+        <details class="fig"><summary>Wettest Mar–May, issued 2021-05-27</summary><div class="body">
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/09_case4_20210527_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/09_case4_20210527_weekly_maps.png" alt="Weekly maps, issued 2021-05-27"></a>
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/08_case4_20210527_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/08_case4_20210527_daily_maps.png" alt="Daily maps, issued 2021-05-27"></a></div></details>
+        <details class="fig"><summary>Wettest Oct–Dec, issued 2022-10-07</summary><div class="body">
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/09_case5_20221007_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/09_case5_20221007_weekly_maps.png" alt="Weekly maps, issued 2022-10-07"></a>
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/08_case5_20221007_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/08_case5_20221007_daily_maps.png" alt="Daily maps, issued 2022-10-07"></a></div></details>
+        <details class="fig"><summary>Wettest Dec–Feb, issued 2021-12-27</summary><div class="body">
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/09_case6_20211227_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/09_case6_20211227_weekly_maps.png" alt="Weekly maps, issued 2021-12-27"></a>
+          <a href="experiments/exp08_review_diagnostics/figures/review_aligned/08_case6_20211227_daily_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp08_review_diagnostics/figures/review_aligned/08_case6_20211227_daily_maps.png" alt="Daily maps, issued 2021-12-27"></a></div></details>
       </div>
     </details>
   </div>
 </section>
 
 <section id="summary">
-  <h2>Summary</h2>
+  <h2>Summary of Experiments 1–8</h2>
   <ol>
-    <li>The model beats raw and debiased ECMWF at every forecast day. Its real skill, with climatology removed, is 0.33 averaged over 32 days: 0.55 at day 1, 0.15 at day 28.</li>
+    <li>On daily maps the model beats raw and debiased ECMWF at every forecast day: real skill 0.325 with climatology removed (0.66 at day 1, 0.15 at day 28).</li>
     <li>The standard score overstates skill, because climatology alone beats raw ECMWF on it.</li>
-    <li>Predicting the departure from normal is the best version: 0.348 vs 0.322 with climatology removed, over 3 seeds each. The gate adds nothing on top (0.350).</li>
-    <li>Predictions are about half as variable as reality.</li>
-    <li>Adding the 12 atmospheric inputs (humidity, winds, pressure, heights, SST) to the base five does not improve the score. Removing yesterday's observed rain changes little: no effect on the standard score, a small unconfirmed gain with climatology removed.</li>
-      <li>Yesterday's observed rain is no longer an input, because it would not be available in real time. The review plots show the model overfits after about epoch 7, runs 1.2–1.7 mm/day too dry, and is worse than raw ECMWF at the all-India weekly amount even though it is better on the spatial pattern.</li>
-    <li>The day-of-year input adds nothing: 0.442 with and without it, over 3 seeds each. Retraining the same setup moves the climatology-removed score by up to 0.016, so single-run gains smaller than that are not established.</li>
+    <li>Predicting the departure from normal helps daily maps (+0.026, 3 seeds), not weekly totals.</li>
+    <li>Predictions are too flat (a third of the real variability) and 1.3–1.7 mm/day too dry, and the India-wide weekly amount is worse than raw ECMWF's.</li>
+    <li>No extra input helps: atmospheric fields, yesterday's observed rain and the day of year are all within noise.</li>
   </ol>
+  <p>Point 4 is what page 2 sets out to fix. <a href="#latest" data-goto="2">Continue to page 2 →</a></p>
 </section>
 
 <section id="issues">
@@ -768,12 +629,243 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <table>
       <thead><tr><th>Issue</th><th>Effect</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td>E<sub>pre</sub> gave 1.386 for a perfect forecast instead of 0 (a constant of 16 where it should be 4)</td><td>All E<sub>pre</sub> values too high by a constant; rankings unchanged</td><td>Fixed</td></tr>
-        <tr><td>The paper's code computes its scaling over training, validation and test years together</td><td>Test data touched their pipeline; small effect</td><td>Our version uses training years only</td></tr>
-        <tr><td>IMD dates each daily total by the day its 24-hour window ends (08:30 IST), so our truth is one day early. ECMWF's day-1 forecast matches IMD's next day better (0.605 vs 0.536).</td><td>Same in every run, so comparisons hold; absolute scores are understated</td><td>Not fixed yet</td></tr>
-        <tr><td>The laptop GPU occasionally faults mid-training (4 of about 18 runs)</td><td>Runs stopped early</td><td>Scored from saved best checkpoints, or rerun automatically</td></tr>
+        <tr><td>ECMWF and IMD days one day apart (IMD dates rain by the morning its window ends)</td><td>First scores compared each forecast day with the wrong IMD day</td><td>Fixed: every run rescored on aligned days</td></tr>
+        <tr><td>E<sub>pre</sub> gave 1.386 for a perfect forecast instead of 0</td><td>All values too high by a constant; rankings unchanged</td><td>Fixed</td></tr>
+        <tr><td>SD ratio averaged over forecasts</td><td>Near-dry days inflated it (reported ~0.5, really ~0.3)</td><td>Median reported</td></tr>
+        <tr><td>The paper's code computes its scaling over all years, test included</td><td>Small leak into their pipeline</td><td>Ours uses training years only</td></tr>
+        <tr><td>The laptop GPU occasionally faults or hangs mid-training</td><td>Runs stopped early</td><td>Rerun; crashed logs kept</td></tr>
       </tbody>
     </table>
+  </div>
+</section>
+</div>
+
+<!-- =============================================================== PAGE 2 -->
+<div class="page" id="page-2" role="tabpanel" aria-labelledby="tab-2" hidden>
+
+<section id="latest" style="border-top:none">
+  <p class="eyebrow">Latest result · Experiments 9–12</p>
+  <h2>A U-Net on top of bias correction is our best forecast</h2>
+  <p>Page 1 ended with a problem: our U-Net was too dry and lost the India-wide rainfall signal. Here we (1) score forecasts the standard way for 2–4 weeks ahead, on <strong>weekly rain totals</strong>; (2) build the simple method everyone should beat, <strong>bias correction</strong>; (3) let a U-Net improve on that. The result, <code>residual_mm</code>, is better than every earlier forecast.</p>
+  <div class="tiles">
+    <div class="tile"><span class="k">Weekly correlation, week 3</span><span class="v">0.404</span><span class="s">bias correction 0.330 · old U-Net 0.224</span></div>
+    <div class="tile"><span class="k">Gain over bias correction</span><span class="v">+0.05 to +0.07</span><span class="s">in every week 1–4, 3 training runs</span></div>
+    <div class="tile"><span class="k">Average dryness</span><span class="v">−0.37</span><span class="s">mm/day; old U-Net −1.55</span></div>
+  </div>
+</section>
+
+<section id="p2-recap">
+  <h2>Where we were</h2>
+  <ul>
+    <li>The U-Net looked good on <strong>daily maps</strong> scored on log(1 + rain): it got the wet/dry pattern of single days right.</li>
+    <li>But 2–4 week forecasts are normally judged on <strong>weekly totals</strong> in mm, where getting the amount right matters. There the U-Net was 1.5 mm/day too dry, and its India-wide weekly signal was far worse than raw ECMWF's (0.22 vs 0.56 at week 3).</li>
+    <li>So we needed a fair, simple reference to compare against, and a model that gets amounts right.</li>
+  </ul>
+</section>
+
+<section id="exp9">
+  <p class="eyebrow">Experiment 9</p>
+  <h2>Plain bias correction (Dyn++)</h2>
+  <p><strong>The idea in one sentence:</strong> ECMWF is systematically too wet in some places and seasons and too dry in others, so measure by how much in past years and scale its forecast by that amount.</p>
+  <ol class="steps">
+    <li><span>For each grid cell, each calendar month and each forecast week (1–4), add up ECMWF's weekly rain and IMD's observed weekly rain over the training years 2004–2017.</span></li>
+    <li><span>The correction factor is their ratio: <code>(observed + 1) / (ECMWF + 1)</code>, capped between ×0.25 and ×4. The "+1" stops dry cells dividing by zero.</span></li>
+    <li><span>A new forecast is multiplied by its factor. No neural network: the whole method is a table of 12 × 4 × 187 numbers.</span></li>
+  </ol>
+  <div class="callout"><strong>Example.</strong> Suppose in July, week 3, ECMWF forecast 50 mm per week for a Mumbai cell on average while IMD observed 80 mm. The factor is 81 / 51 ≈ 1.6, so a new July week-3 forecast of 40 mm becomes about 64 mm.</div>
+  <p>The method follows Dyn++ from the ABC paper (<a href="https://doi.org/10.1038/s41467-023-38874-y">Mouatadid et al. 2023</a>), simplified. Training years use factors fitted with that year left out, so no forecast is corrected with its own answer. Experiment 11 tightens this to past years only; Experiment 12 checks the ±1-month window behind the table.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Weekly correlation, per grid cell</th><th class="n">Week 1</th><th class="n">Week 2</th><th class="n">Week 3</th><th class="n">Week 4</th><th class="n">Bias, mm/day</th></tr></thead>
+      <tbody>
+        <tr><td>Raw ECMWF</td><td class="n">0.556</td><td class="n">0.382</td><td class="n">0.210</td><td class="n">0.130</td><td class="n">−0.03</td></tr>
+        <tr class="hl"><td>Dyn++ (bias correction)</td><td class="n">0.668</td><td class="n">0.512</td><td class="n">0.330</td><td class="n">0.239</td><td class="n">−0.06</td></tr>
+        <tr><td>Old U-Net (16 inputs)</td><td class="n">0.591</td><td class="n">0.386</td><td class="n">0.224</td><td class="n">0.142</td><td class="n">−1.55</td></tr>
+        <tr><td>Old U-Net, departure from normal</td><td class="n">0.603</td><td class="n">0.374</td><td class="n">0.181</td><td class="n">0.106</td><td class="n">−1.53</td></tr>
+      </tbody>
+      <caption>7-day totals with the 1951–2020 normal removed, every land cell pooled, 153 test forecasts (2021–2023), aligned days 1–28. U-Nets: mean of 3 seeds.</caption>
+    </table>
+  </div>
+  <p><strong>Bias correction beats raw ECMWF by about +0.11 in every week, and beats every U-Net from page 1.</strong> It also keeps ECMWF's India-wide signal (0.59 at week 3, against the old U-Net's 0.20) and has almost no bias.</p>
+  <div class="callout"><strong>Why the old U-Net lost: it learned on a log scale.</strong> On log(1 + rain), predicting 20 mm instead of 40 mm costs about as much as predicting 1 mm instead of 2. Most grid-days are dry or light, so the network is rewarded for light-rain detail and barely penalised for missing heavy rain. Converting a log-scale best guess back to mm also lands below the true average. The result is a forecast that is right about <em>where</em> it rains and wrong about <em>how much</em>.</div>
+</section>
+
+<section id="exp10">
+  <p class="eyebrow">Experiment 10</p>
+  <h2>A U-Net that corrects the bias correction</h2>
+  <p>Instead of building a forecast from scratch, the U-Net now <strong>starts from Dyn++ and learns only a correction</strong>. Its correction starts at exactly zero, so before training the model <em>is</em> Dyn++; it can only learn changes that improve on it. Same 16 inputs, with ECMWF rain replaced by Dyn++ rain.</p>
+  <figure>
+    <div class="diagram">
+      <svg viewBox="0 0 880 170" role="img" aria-label="Flow: ECMWF forecast goes through the bias-correction table to give Dyn++; the U-Net sees the forecast fields and outputs a correction factor; Dyn++ times the factor gives the final forecast.">
+        <defs><marker id="ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="d-head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+        <rect class="d-box" x="10" y="20" width="180" height="56" rx="4"/>
+        <text class="d-tb" x="24" y="44">ECMWF forecast</text><text class="d-s" x="24" y="64">rain + 13 other fields</text>
+        <rect class="d-green" x="240" y="20" width="190" height="56" rx="4"/>
+        <text class="d-tb" x="254" y="44">Bias correction</text><text class="d-s" x="254" y="64">Dyn++ table (Exp 9)</text>
+        <rect class="d-key" x="240" y="100" width="190" height="56" rx="4"/>
+        <text class="d-tb" x="254" y="124">3D U-Net</text><text class="d-s" x="254" y="144">outputs a factor, starts at ×1</text>
+        <rect class="d-win" x="500" y="58" width="150" height="56" rx="4"/>
+        <text class="d-tb" x="575" y="82" text-anchor="middle">Dyn++ × factor</text><text class="d-s" x="575" y="102" text-anchor="middle">residual_mm</text>
+        <rect class="d-box" x="700" y="58" width="170" height="56" rx="4"/>
+        <text class="d-tb" x="714" y="82">Final forecast</text><text class="d-s" x="714" y="102">mm/day, 28 days</text>
+        <path class="d-line" d="M190,48 L236,48" marker-end="url(#ah3)"/>
+        <path class="d-line" d="M210,48 L210,128 L236,128" marker-end="url(#ah3)"/>
+        <path class="d-line" d="M335,76 L335,96" marker-end="url(#ah3)"/>
+        <path class="d-line" d="M430,48 L470,48 L470,78 L496,78" marker-end="url(#ah3)"/>
+        <path class="d-line" d="M430,128 L470,128 L470,96 L496,96" marker-end="url(#ah3)"/>
+        <path class="d-line" d="M650,86 L696,86" marker-end="url(#ah3)"/>
+      </svg>
+    </div>
+  </figure>
+  <p>We tried three versions:</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Version</th><th>Starts from</th><th>How the correction is applied</th><th>Training error measured in</th></tr></thead>
+      <tbody>
+        <tr><td><code>plain_aligned</code> (control)</td><td>nothing</td><td>predicts rain directly, like page 1</td><td>log(1 + rain)</td></tr>
+        <tr><td><code>residual</code></td><td>Dyn++</td><td>adds a correction in log(1 + rain)</td><td>log(1 + rain)</td></tr>
+        <tr class="best"><td><code>residual_mm</code></td><td>Dyn++</td><td>multiplies Dyn++ by a factor (×0.8, ×1.3, …)</td><td>mm/day: real rain amounts</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong><code>residual</code> vs <code>residual_mm</code>.</strong> Both start from the same unbiased Dyn++. <code>residual</code> trains on the log scale, so training drags it back to the old dryness. <code>residual_mm</code> measures its error in mm/day, so missing a heavy-rain week costs what it should, and it keeps Dyn++'s correct amounts. Its pattern score also uses only the departure from normal, so it gets no credit for geography (the west coast is always wetter) and has to learn real anomalies.</p>
+</section>
+
+<section id="p2-results">
+  <h2>Results: <code>residual_mm</code> is the best forecast in every week</h2>
+  <figure>
+    <div class="legend" id="lg-weekly"></div>
+    <div class="chart" id="c-weekly"></div>
+    <figcaption>Weekly correlation per grid cell (7-day totals, normal removed), 153 test forecasts. <code>residual_mm</code> and the old U-Net: mean of 3 seeds; <code>residual</code>: 1 seed. Hover for values.</figcaption>
+  </figure>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Forecast</th><th class="n">Wk 1</th><th class="n">Wk 2</th><th class="n">Wk 3</th><th class="n">Wk 4</th><th class="n">All-India wk 1</th><th class="n">wk 2</th><th class="n">wk 3</th><th class="n">wk 4</th></tr></thead>
+      <tbody>
+        <tr><td>Raw ECMWF</td><td class="n">0.556</td><td class="n">0.382</td><td class="n">0.210</td><td class="n">0.130</td><td class="n">0.890</td><td class="n">0.790</td><td class="n">0.567</td><td class="n">0.396</td></tr>
+        <tr><td>Dyn++</td><td class="n">0.668</td><td class="n">0.512</td><td class="n">0.330</td><td class="n">0.239</td><td class="n">0.910</td><td class="n">0.837</td><td class="n">0.590</td><td class="n">0.389</td></tr>
+        <tr><td>Old U-Net (page 1)</td><td class="n">0.591</td><td class="n">0.386</td><td class="n">0.224</td><td class="n">0.142</td><td class="n">0.535</td><td class="n">0.398</td><td class="n">0.203</td><td class="n">0.095</td></tr>
+        <tr><td><code>plain_aligned</code></td><td class="n">0.551</td><td class="n">0.358</td><td class="n">0.207</td><td class="n">0.136</td><td class="n">0.459</td><td class="n">0.331</td><td class="n">0.170</td><td class="n">0.073</td></tr>
+        <tr><td><code>residual</code></td><td class="n">0.628</td><td class="n">0.389</td><td class="n">0.196</td><td class="n">0.141</td><td class="n">0.613</td><td class="n">0.400</td><td class="n">0.189</td><td class="n">0.104</td></tr>
+        <tr class="best"><td><code>residual_mm</code></td><td class="n">0.730</td><td class="n">0.558</td><td class="n">0.404</td><td class="n">0.299</td><td class="n">0.901</td><td class="n">0.838</td><td class="n">0.624</td><td class="n">0.420</td></tr>
+      </tbody>
+      <caption>"All-India" correlates the India-average weekly anomaly across the 153 forecasts.</caption>
+    </table>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Accuracy</th><th class="n">Weekly RMSE wk 1</th><th class="n">wk 2</th><th class="n">wk 3</th><th class="n">wk 4</th><th class="n">Daily RMSE</th><th class="n">Bias</th></tr></thead>
+      <tbody>
+        <tr><td>Dyn++</td><td class="n">26.8</td><td class="n">30.8</td><td class="n">34.0</td><td class="n">35.0</td><td class="n">6.57</td><td class="n">−0.06</td></tr>
+        <tr><td>Old U-Net (seed 0)</td><td class="n">29.0</td><td class="n">34.7</td><td class="n">37.1</td><td class="n">38.0</td><td class="n">6.39</td><td class="n">−1.55</td></tr>
+        <tr><td><code>residual</code></td><td class="n">29.2</td><td class="n">34.8</td><td class="n">37.9</td><td class="n">38.4</td><td class="n">6.38</td><td class="n">−1.58</td></tr>
+        <tr class="best"><td><code>residual_mm</code></td><td class="n">24.6</td><td class="n">29.8</td><td class="n">32.7</td><td class="n">34.2</td><td class="n">6.23</td><td class="n">−0.37</td></tr>
+      </tbody>
+      <caption>Weekly RMSE in mm per week, per grid cell; daily RMSE and bias in mm/day. Lower is better. (The log-space U-Nets' low daily RMSE comes from under-predicting everywhere, which is why the weekly numbers matter.)</caption>
+    </table>
+  </div>
+  <ul>
+    <li><strong>Beats Dyn++ per grid cell in every week</strong>: +0.063, +0.046, +0.074, +0.060. Every 95% range excludes zero (week 1: +0.044 to +0.082), and it is 1–2 mm/week more accurate.</li>
+    <li><strong>Ties Dyn++ on the India-wide signal</strong>: differences −0.009 to +0.034, all inside the noise. It keeps what the old U-Net lost.</li>
+    <li><strong>Training in mm is the key</strong>: <code>residual</code> starts from the same Dyn++ but trains on the log scale, and ends up below Dyn++ and as dry as the old model.</li>
+  </ul>
+</section>
+
+<section id="p2-trust">
+  <h2>How sure are we?</h2>
+  <ul>
+    <li><strong>Three training runs agree:</strong> <code>residual_mm</code>'s seeds differ by at most 0.02 in weekly correlation, much less than its +0.05 to +0.07 gain.</li>
+    <li><strong>The gain survives resampling</strong> the test forecasts (paired bootstrap): every weekly 95% range excludes zero.</li>
+    <li><strong>No future data:</strong> with bias-correction factors for training years fitted on earlier years only, the result is unchanged (Experiment 11, below).</li>
+    <li><strong>Limits:</strong> only 3 test years (2021–2023); <code>plain_aligned</code> and <code>residual</code> were run once each (their gaps to Dyn++ are far larger than seed noise); <code>residual_mm</code> got its extra runs after its first run looked best, and runs 2 and 3 reproduced it.</li>
+  </ul>
+</section>
+
+<section id="exp11">
+  <p class="eyebrow">Experiment 11</p>
+  <h2>Does the result rely on future years? No</h2>
+  <p>In Experiment 10, the U-Net's training forecasts were corrected with Dyn++ factors fitted on every training year <em>except their own</em>. A July 2010 forecast was corrected using IMD rain from 2004–2009 <strong>and 2011–2017</strong>, partly from its future. Here we refit those factors on <strong>earlier years only</strong> and retrain <code>residual_mm</code>.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Where IMD rain is used</th><th>Experiment 10</th><th>Experiment 11</th></tr></thead>
+      <tbody>
+        <tr><td>U-Net inputs</td><td>none</td><td>none</td></tr>
+        <tr><td>Dyn++ factors, training forecast from year Y</td><td>all of 2004–2017 except Y</td><td><strong>2004 to Y−1 only</strong> (2004: no correction)</td></tr>
+        <tr><td>Dyn++ factors, validation and test forecasts</td><td>2004–2017</td><td>2004–2017 (unchanged)</td></tr>
+      </tbody>
+      <caption>In both, no IMD rain from the forecast's own year or the days before it enters the correction. Test forecasts (2021–2023) only ever use 2004–2017.</caption>
+    </table>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Forecast</th><th class="n">Corr wk 1</th><th class="n">wk 2</th><th class="n">wk 3</th><th class="n">wk 4</th><th class="n">RMSE wk 1</th><th class="n">wk 2</th><th class="n">wk 3</th><th class="n">wk 4</th></tr></thead>
+      <tbody>
+        <tr><td>Dyn++</td><td class="n">0.668</td><td class="n">0.512</td><td class="n">0.330</td><td class="n">0.239</td><td class="n">26.8</td><td class="n">30.8</td><td class="n">34.0</td><td class="n">35.0</td></tr>
+        <tr><td><code>residual_mm</code>, all years but its own</td><td class="n">0.730</td><td class="n">0.558</td><td class="n">0.404</td><td class="n">0.299</td><td class="n">24.6</td><td class="n">29.8</td><td class="n">32.7</td><td class="n">34.2</td></tr>
+        <tr class="best"><td><code>residual_mm</code>, past years only (final)</td><td class="n">0.725</td><td class="n">0.544</td><td class="n">0.399</td><td class="n">0.287</td><td class="n">24.8</td><td class="n">30.1</td><td class="n">32.8</td><td class="n">34.4</td></tr>
+      </tbody>
+      <caption>Weekly correlation per grid cell (normal removed) and weekly RMSE in mm/week, 153 test forecasts. Both U-Nets: mean of 3 seeds.</caption>
+    </table>
+  </div>
+  <p><strong>The scores are the same within noise.</strong> The past-only model is 0.005–0.014 lower in correlation and 0.1–0.4 mm/week higher in RMSE, about the difference between two training runs of the same model. It still beats Dyn++ in every week. The Experiment 10 result does not depend on future data, and <strong>this past-only model is our final version</strong>. Its predicted-vs-observed figures follow.</p>
+</section>
+
+<section id="p2-figs">
+  <p class="eyebrow">Experiment 11 · final model</p>
+  <h2>Predicted vs observed, final model</h2>
+  <p>Time series of observed rain (black) against Dyn++ (green), <code>residual</code> (purple) and <code>residual_mm</code> (orange: the final version, trained with past-years-only factors), seed 0 of each U-Net, test years 2021–2023. The purple line sits well below the observed line through every monsoon; the orange line tracks it.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>All-India weekly departure from normal, correlation</th><th class="n">Week 1</th><th class="n">Week 2</th><th class="n">Week 3</th><th class="n">Week 4</th></tr></thead>
+      <tbody>
+        <tr><td>Dyn++</td><td class="n">0.91</td><td class="n">0.84</td><td class="n">0.58</td><td class="n">0.38</td></tr>
+        <tr><td><code>residual</code></td><td class="n">0.61</td><td class="n">0.40</td><td class="n">0.20</td><td class="n">0.11</td></tr>
+        <tr class="best"><td><code>residual_mm</code></td><td class="n">0.90</td><td class="n">0.84</td><td class="n">0.62</td><td class="n">0.40</td></tr>
+      </tbody>
+      <caption>From the series in the first figure (seed 0, normal from 1951–2020).</caption>
+    </table>
+  </div>
+  <div class="fig-tools"><button type="button" data-figs="p2-figs" data-open="1">Open all images</button><button type="button" data-figs="p2-figs" data-open="0">Close all</button></div>
+  <div class="figs">
+    <details class="fig" open>
+      <summary>All-India weekly series <span>weeks 1–4, 2021–2023</span></summary>
+      <div class="body"><a href="experiments/exp11_past_only_factors/figures/01_allindia_timeseries_by_week.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp11_past_only_factors/figures/01_allindia_timeseries_by_week.png" alt="All-India weekly mean rainfall: observed vs Dyn++, residual and residual_mm, weeks 1 to 4"></a></div>
+    </details>
+    <details class="fig">
+      <summary>City time series <span>Delhi, Mumbai, Kolkata, Chennai; weeks 1 and 3</span></summary>
+      <div class="body">
+        <a href="experiments/exp11_past_only_factors/figures/02_city_timeseries.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp11_past_only_factors/figures/02_city_timeseries.png" alt="Single-cell weekly rainfall for four cities"></a>
+        <p>Single 1.5° cells are noisy. <code>residual_mm</code> has the best departure correlation in 6 of the 8 panels (e.g. Kolkata week 3: 0.49 vs 0.27 for Dyn++); Dyn++ is slightly better for Delhi and Chennai at week 3.</p>
+      </div>
+    </details>
+    <details class="fig">
+      <summary>Case time series <span>daily all-India rain, the six test cases from page 1</span></summary>
+      <div class="body"><a href="experiments/exp11_past_only_factors/figures/03_case_timeseries.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp11_past_only_factors/figures/03_case_timeseries.png" alt="Daily all-India rainfall for six test cases"></a></div>
+    </details>
+    <details class="fig">
+      <summary>Case maps <span>wettest Jun–Aug period, issued 2022-07-01</span></summary>
+      <div class="body">
+        <a href="experiments/exp11_past_only_factors/figures/04_case1_weekly_maps.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp11_past_only_factors/figures/04_case1_weekly_maps.png" alt="Weekly-mean maps: observed, Dyn++, residual, residual_mm"></a>
+        <p>One forecast only, so map correlations are close between methods (0.36–0.94). <code>residual</code>'s maps are visibly paler (too dry); <code>residual_mm</code> keeps the heavy rain on the west coast and in central India. The skill numbers above, over all 153 forecasts, are the fair comparison.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="exp12">
+  <p class="eyebrow">Experiment 12 · no training</p>
+  <h2>Does ECMWF's error follow the season?</h2>
+  <p>Dyn++ corrects a July forecast using June, July and August forecasts from past years (a ±1-month window), which triples the data. That only works if ECMWF's error in July resembles its error in June and August. We checked on 2004–2017.</p>
+  <ul>
+    <li><strong>The error has a seasonal cycle.</strong> Over India, ECMWF is too dry before the monsoon (Feb–Apr, needs up to ×1.3), about right on average during it (Jun–Sep, ×0.9–1.0) and too wet after it (Oct–Dec, ×0.5–0.7).</li>
+    <li><strong>It is a pattern, not noise.</strong> We fitted correction maps separately on even and odd years (no shared forecasts). The same month in the two halves correlates 0.68–0.75; one month apart 0.53–0.59; two months 0.34–0.43; six months 0.12–0.17. Similarity fades steadily with distance, as a seasonal pattern would.</li>
+    <li><strong>±1 month is a good window.</strong> On the validation years it ties a same-month-only window; ±2, ±3 months and a single all-year factor are steadily worse (week 1: 0.648, 0.636, 0.627, 0.619).</li>
+  </ul>
+  <div class="figs">
+    <details class="fig" open>
+      <summary>ECMWF's error by month, and how alike nearby months are <span>2004–2017</span></summary>
+      <div class="body"><a href="experiments/exp12_seasonal_bias_check/results/seasonal_bias.png" target="_blank" rel="noopener"><img loading="lazy" src="experiments/exp12_seasonal_bias_check/results/seasonal_bias.png" alt="Left: median correction factor by issue month for weeks 1 to 4. Right: correlation of correction maps against months apart, falling from about 0.7 at 0 to about 0.15 at 6."></a></div>
+    </details>
   </div>
 </section>
 
@@ -783,11 +875,11 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     <table>
       <thead><tr><th>Step</th><th>Why</th></tr></thead>
       <tbody>
-        <tr><td>Make departure from normal the main model</td><td>The one change confirmed over 3 seeds (Experiment 3)</td></tr>
-        <tr><td>Change the loss or back-transform to stop the flattening and the dry bias</td><td>Biggest known weakness; the review scatter plots show it clearly</td></tr>
-        <tr><td>Quantile-mapping baseline</td><td>The standard simple method a new approach is expected to beat</td></tr>
-        <tr><td>Tercile probability output (below / near / above normal)</td><td>Needed to compare with the <a href="https://doi.org/10.1007/s00382-026-08286-x">one published U-Net for Indian monsoon rainfall</a></td></tr>
-        <tr><td>Ensemble test: 1 run vs 11 runs vs their average</td><td>The paper's other test; we already use the average, which they found best</td></tr>
+        <tr><td>Cross-validation over years</td><td>Three test years cannot show year-to-year variation</td></tr>
+        <tr><td>Reduce flattening in <code>residual_mm</code></td><td>Its maps still carry 60% of the real spread</td></tr>
+        <tr><td>Quantile-mapping baseline</td><td>The other standard simple method to beat</td></tr>
+        <tr><td>Tercile probabilities (below / near / above normal)</td><td>To compare with the <a href="https://doi.org/10.1007/s00382-026-08286-x">published Indian monsoon U-Net</a></td></tr>
+        <tr><td>Two more runs of <code>plain_aligned</code>, <code>residual</code> and the "+ winds" input set</td><td>Their numbers rest on single runs</td></tr>
       </tbody>
     </table>
   </div>
@@ -796,13 +888,14 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
 <section id="refs">
   <h2>References</h2>
   <ul>
-    <li>Ryu, Kim, Wang &amp; Yoon (2026), <a href="https://gmd.copernicus.org/articles/19/27/2026/">Increasing resolution and accuracy in sub-seasonal forecasting through 3D U-Net: the western US</a>, Geoscientific Model Development 19, 27–39.</li>
-    <li>Reference code: <a href="https://github.com/W-US-BCSR/IRnAF">github.com/W-US-BCSR/IRnAF</a> (<a href="https://zenodo.org/records/14776781">Zenodo archive</a>).</li>
+    <li>Ryu, Kim, Wang &amp; Yoon (2026), <a href="https://gmd.copernicus.org/articles/19/27/2026/">Increasing resolution and accuracy in sub-seasonal forecasting through 3D U-Net: the western US</a>, Geoscientific Model Development 19, 27–39. Code: <a href="https://github.com/W-US-BCSR/IRnAF">github.com/W-US-BCSR/IRnAF</a>.</li>
+    <li>Mouatadid et al. (2023), <a href="https://doi.org/10.1038/s41467-023-38874-y">Adaptive bias correction for improved subseasonal forecasting</a>, Nature Communications 14, 3482 (ABC; source of Dyn++).</li>
     <li>Forecasts: <a href="https://apps.ecmwf.int/datasets/data/s2s/levtype=sfc/type=pf/">ECMWF S2S reforecasts</a>, 11 ensemble runs, issued weekly 2004–2023.</li>
     <li>Observations: <a href="https://imdpune.gov.in">IMD Pune</a> gridded daily rainfall, 1951–2025.</li>
     <li>Indian monsoon U-Net: <a href="https://doi.org/10.1007/s00382-026-08286-x">Climate Dynamics (2026)</a>.</li>
   </ul>
 </section>
+</div>
 </main>
 
 <div class="tip" id="tip" hidden></div>
@@ -836,40 +929,36 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     items.forEach((it) => {
       const s = document.createElement("span");
       const sv = el("svg", { viewBox: "0 0 28 10", "aria-hidden": "true" }, s);
-      if (it.dot) {
-        el("circle", { cx: 14, cy: 5, r: 4, style: `fill:var(--surface);stroke:${it.color};stroke-width:2` }, sv);
-      } else {
-        el("line", { x1: 1, y1: 5, x2: 27, y2: 5, style: `stroke:${it.color};stroke-width:2.5;stroke-linecap:round${it.dash ? ";stroke-dasharray:" + it.dash : ""}` }, sv);
-      }
+      el("line", { x1: 1, y1: 5, x2: 27, y2: 5, style: `stroke:${it.color};stroke-width:${it.width || 2.5};stroke-linecap:round${it.dash ? ";stroke-dasharray:" + it.dash : ""}` }, sv);
       s.appendChild(document.createTextNode(it.name));
       host.appendChild(s);
     });
   }
 
+  // Line chart over x = 1..n (forecast days or weeks).
   function lineChart(hostId, opt) {
     const host = document.getElementById(hostId);
-    const W = 760, H = 300, m = { l: 48, r: 16, t: 14, b: 42 };
+    const n = opt.series[0].values.length;
+    const W = 760, H = opt.height || 300, m = { l: 48, r: 16, t: 14, b: 42 };
     const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opt.label }, host);
-    const x = (d) => m.l + ((d - 1) / 31) * (W - m.l - m.r);
+    const pad = opt.xPad || 0;
+    const x = (d) => m.l + pad + ((d - 1) / (n - 1)) * (W - m.l - m.r - 2 * pad);
     const y = (v) => m.t + (1 - (v - opt.yMin) / (opt.yMax - opt.yMin)) * (H - m.t - m.b);
 
     opt.yTicks.forEach((t) => {
       el("line", { class: t === opt.yMin ? "c-axis" : "c-grid", x1: m.l, x2: W - m.r, y1: y(t), y2: y(t) }, svg);
       el("text", { class: "c-tick", x: m.l - 8, y: y(t) + 4, "text-anchor": "end" }, svg).textContent = t.toFixed(1);
     });
-    [1, 7, 14, 21, 28, 32].forEach((d) => {
-      el("text", { class: "c-tick", x: x(d), y: H - m.b + 20, "text-anchor": "middle" }, svg).textContent = d;
+    opt.xTicks.forEach((d) => {
+      el("text", { class: "c-tick", x: x(d), y: H - m.b + 20, "text-anchor": "middle" }, svg).textContent = (opt.xTickLabel || String)(d);
     });
-    el("text", { class: "c-note", x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle" }, svg).textContent = "forecast day";
+    el("text", { class: "c-note", x: (m.l + W - m.r) / 2, y: H - 4, "text-anchor": "middle" }, svg).textContent = opt.xLabel;
 
     opt.series.forEach((s) => {
       const d = s.values.map((v, i) => (i ? "L" : "M") + x(i + 1).toFixed(1) + "," + y(v).toFixed(1)).join(" ");
-      el("path", { d, style: `fill:none;stroke:${s.color};stroke-width:2;stroke-linejoin:round;stroke-linecap:round${s.dash ? ";stroke-dasharray:" + s.dash : ""}` }, svg);
-    });
-    (opt.points || []).forEach((p) => {
-      p.pts.forEach(([d, v]) => {
-        el("circle", { cx: x(d), cy: y(v), r: 4.5, style: `fill:var(--surface);stroke:${p.color};stroke-width:2` }, svg);
-      });
+      el("path", { d, style: `fill:none;stroke:${s.color};stroke-width:${s.width || 2};stroke-linejoin:round;stroke-linecap:round${s.dash ? ";stroke-dasharray:" + s.dash : ""}` }, svg);
+      if (opt.markers) s.values.forEach((v, i) => el("circle", { cx: x(i + 1), cy: y(v), r: s.width > 2.5 ? 5 : 3.5, style: `fill:${s.color};stroke:var(--surface);stroke-width:1.5` }, svg));
+      if (s.endLabel) el("text", { class: "c-val", x: x(n) + 8, y: y(s.values[n - 1]) + 5, style: `fill:${s.color}` }, svg).textContent = s.values[n - 1].toFixed(3);
     });
 
     const cross = el("line", { class: "c-axis", y1: m.t, y2: H - m.b, visibility: "hidden" }, svg);
@@ -880,19 +969,15 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
       const pt = svg.createSVGPoint();
       pt.x = ev.clientX; pt.y = ev.clientY;
       const p = pt.matrixTransform(svg.getScreenCTM().inverse());
-      const day = Math.max(1, Math.min(32, Math.round(1 + ((p.x - m.l) / (W - m.l - m.r)) * 31)));
-      cross.setAttribute("x1", x(day)); cross.setAttribute("x2", x(day));
+      const k = Math.max(1, Math.min(n, Math.round(1 + ((p.x - m.l - pad) / (W - m.l - m.r - 2 * pad)) * (n - 1))));
+      cross.setAttribute("x1", x(k)); cross.setAttribute("x2", x(k));
       cross.setAttribute("visibility", "visible");
-      let html = `<b>Forecast day ${day}</b>`;
+      let html = `<b>${opt.tipTitle(k)}</b>`;
       opt.series.forEach((s, i) => {
-        const v = s.values[day - 1];
-        dots[i].setAttribute("cx", x(day)); dots[i].setAttribute("cy", y(v));
+        const v = s.values[k - 1];
+        dots[i].setAttribute("cx", x(k)); dots[i].setAttribute("cy", y(v));
         dots[i].setAttribute("visibility", "visible");
         html += `<div class="row"><i style="background:${s.color}"></i>${s.name}: ${fmt(v)}</div>`;
-      });
-      (opt.points || []).forEach((pp) => {
-        const hitPt = pp.pts.find(([d]) => d === day);
-        if (hitPt) html += `<div class="row"><i style="background:${pp.color}"></i>${pp.name}: ${fmt(hitPt[1])}</div>`;
       });
       showTip(html, ev);
     }
@@ -917,46 +1002,17 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     const x = (v) => labelW + (v / opt.xMax) * plotW;
     opt.ticks.forEach((t) => {
       el("line", { class: t === 0 ? "c-axis" : "c-grid", x1: x(t), x2: x(t), y1: top, y2: H - axisH + 4 }, svg);
-      el("text", { class: "c-tick", x: x(t), y: H - 8, "text-anchor": "middle" }, svg).textContent = t.toFixed(opt.tickDigits || 1);
+      el("text", { class: "c-tick", x: x(t), y: H - 8, "text-anchor": "middle" }, svg).textContent = t.toFixed(1);
     });
     opt.rows.forEach((r, i) => {
       const yy = top + i * rowH + 10;
       el("text", { class: "c-lab", x: labelW - 12, y: yy + 15, "text-anchor": "end" }, svg).textContent = r.label;
       el("path", { d: barPath(x(0), yy, x(r.value) - x(0), 20, 4), style: `fill:${r.color}` }, svg);
       el("text", { class: "c-val", x: x(r.value) + 8, y: yy + 15 }, svg).textContent = fmt(r.value);
-      const hit = el("rect", { x: 0, y: yy - 8, width: W, height: rowH, fill: "transparent" }, svg);
-      hit.addEventListener("mousemove", (ev) => showTip(`<b>${r.label}</b>${r.tip || fmt(r.value)}`, ev));
-      hit.addEventListener("mouseleave", hideTip);
     });
   }
 
-  function dotChart(hostId, opt) {
-    const host = document.getElementById(hostId);
-    const rowH = 40, labelW = 290, W = 760, top = 28, axisH = 30;
-    const H = top + opt.rows.length * rowH + axisH;
-    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opt.label }, host);
-    const plotW = W - labelW - 40;
-    const x = (v) => labelW + ((v - opt.xMin) / (opt.xMax - opt.xMin)) * plotW;
-    el("rect", { x: x(opt.band[0]), y: top - 4, width: x(opt.band[1]) - x(opt.band[0]), height: opt.rows.length * rowH, style: "fill:var(--band)" }, svg);
-    el("text", { class: "c-note", x: x((opt.band[0] + opt.band[1]) / 2), y: top - 10, "text-anchor": "middle" }, svg).textContent = "same setup, two runs";
-    opt.ticks.forEach((t) => {
-      el("line", { class: "c-grid", x1: x(t), x2: x(t), y1: top - 4, y2: H - axisH + 4 }, svg);
-      el("text", { class: "c-tick", x: x(t), y: H - 8, "text-anchor": "middle" }, svg).textContent = t.toFixed(3);
-    });
-    opt.rows.forEach((r, i) => {
-      const yy = top + i * rowH + rowH / 2 - 4;
-      el("text", { class: "c-lab", x: labelW - 12, y: yy + 5, "text-anchor": "end" }, svg).textContent = r.label;
-      el("line", { class: "c-grid", x1: labelW, x2: W - 40, y1: yy, y2: yy }, svg);
-      el("circle", { cx: x(r.value), cy: yy, r: 6, style: "fill:var(--s1);stroke:var(--surface);stroke-width:2" }, svg);
-      el("text", { class: "c-val", x: x(r.value), y: yy - 12, "text-anchor": "middle" }, svg).textContent = fmt(r.value);
-      const hit = el("rect", { x: 0, y: yy - rowH / 2, width: W, height: rowH, fill: "transparent" }, svg);
-      hit.addEventListener("mousemove", (ev) => showTip(`<b>${r.label}</b>average correlation ${fmt(r.value)}`, ev));
-      hit.addEventListener("mouseleave", hideTip);
-    });
-  }
-
-  const D = {"anom_corr": {"raw": [0.4364, 0.4252, 0.4397, 0.4308, 0.4077, 0.4004, 0.375, 0.31, 0.3078, 0.279, 0.2631, 0.2199, 0.1999, 0.1735, 0.1654, 0.1351, 0.1168, 0.1026, 0.0812, 0.1062, 0.0912, 0.053, 0.0414, 0.0077, 0.0296, 0.0333, 0.0569, 0.0317, 0.0449, 0.0341, 0.02, 0.029], "debiased": [0.4661, 0.4532, 0.4698, 0.4575, 0.4407, 0.4272, 0.4154, 0.3632, 0.3614, 0.3302, 0.3113, 0.2826, 0.2428, 0.2096, 0.2235, 0.1939, 0.1667, 0.1362, 0.1161, 0.1315, 0.1203, 0.099, 0.0779, 0.0467, 0.0713, 0.0764, 0.0928, 0.0595, 0.0829, 0.0596, 0.0552, 0.0573], "baseline": [0.5564, 0.6578, 0.6398, 0.6225, 0.6001, 0.56, 0.545, 0.4863, 0.4684, 0.4253, 0.4116, 0.38, 0.3546, 0.3175, 0.3142, 0.3013, 0.2498, 0.237, 0.2333, 0.2477, 0.2157, 0.1929, 0.1962, 0.1672, 0.1773, 0.169, 0.1853, 0.1484, 0.1474, 0.1495, 0.117, 0.1446]}};
-
+  // ---- page 1 charts
   barChart("c-exp1", {
     label: "Day-1 pattern correlation for models trained on 60, 250 and 724 forecasts: 0.416, 0.470, 0.553.",
     xMax: 0.6, ticks: [0, 0.2, 0.4, 0.6],
@@ -967,39 +1023,52 @@ ecmwf_dev  = (ecmwf − ecmwf_usual) / σ_ecmwf                  how unusual ECM
     ]
   });
 
+  const A = {"raw": [0.594, 0.568, 0.5561, 0.5094, 0.4744, 0.4434, 0.3678, 0.3386, 0.3076, 0.286, 0.2471, 0.2253, 0.1925, 0.1527, 0.1394, 0.121, 0.1029, 0.092, 0.105, 0.0879, 0.0597, 0.0462, 0.0182, 0.0213, 0.0356, 0.0571, 0.0535, 0.0408, 0.0503, 0.0178, 0.0318], "debiased": [0.6389, 0.6102, 0.5947, 0.5489, 0.5094, 0.4881, 0.428, 0.3979, 0.3629, 0.3341, 0.3037, 0.2735, 0.2317, 0.2004, 0.1958, 0.1718, 0.1363, 0.1246, 0.133, 0.1178, 0.105, 0.0821, 0.0598, 0.0573, 0.0762, 0.0949, 0.0832, 0.0787, 0.0811, 0.051, 0.0618], "baseline": [0.6578, 0.6398, 0.6225, 0.6001, 0.56, 0.545, 0.4863, 0.4684, 0.4253, 0.4116, 0.38, 0.3546, 0.3175, 0.3142, 0.3013, 0.2498, 0.237, 0.2333, 0.2477, 0.2157, 0.1929, 0.1962, 0.1672, 0.1773, 0.169, 0.1853, 0.1484, 0.1474, 0.1495, 0.117, 0.1446]};
   const exp2Series = [
-    { name: "Raw ECMWF", color: "var(--ref2)", dash: "6 5", values: D.anom_corr.raw },
-    { name: "Debiased ECMWF", color: "var(--ref1)", dash: "2 4", values: D.anom_corr.debiased },
-    { name: "Baseline model", color: "var(--s1)", values: D.anom_corr.baseline }
+    { name: "Raw ECMWF", color: "var(--ref2)", dash: "6 5", values: A.raw },
+    { name: "Debiased ECMWF", color: "var(--ref1)", dash: "2 4", values: A.debiased },
+    { name: "Baseline model", color: "var(--s1)", values: A.baseline }
   ];
   legend("lg-exp2", exp2Series);
   lineChart("c-exp2", {
     label: "Pattern correlation with climatology removed, by forecast day. The Baseline model stays above debiased and raw ECMWF at every day.",
     yMin: 0, yMax: 0.7, yTicks: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7],
+    xTicks: [1, 7, 14, 21, 28, 31], xLabel: "forecast day", tipTitle: (d) => `Forecast day ${d}`,
     series: exp2Series
   });
 
-  barChart("c-exp3", {
-    label: "Average correlation with climatology removed, mean of 3 seeds: Baseline 0.322, departure from normal 0.348.",
-    xMax: 0.4, ticks: [0, 0.1, 0.2, 0.3, 0.4],
-    rows: [
-      { label: "Baseline", value: 0.322, color: "var(--s1)" },
-      { label: "Departure from normal", value: 0.348, color: "var(--s3)" }
-    ]
+  // ---- page 2 chart
+  const weekly = [
+    { name: "Raw ECMWF", color: "var(--ref2)", dash: "6 5", values: [0.556, 0.382, 0.210, 0.130] },
+    { name: "Old U-Net (page 1)", color: "var(--ref1)", dash: "2 4", values: [0.591, 0.386, 0.224, 0.142] },
+    { name: "residual", color: "var(--s5)", values: [0.628, 0.389, 0.196, 0.141] },
+    { name: "Dyn++ (bias correction)", color: "var(--s3)", values: [0.668, 0.512, 0.330, 0.239], endLabel: true },
+    { name: "residual_mm", color: "var(--s2)", width: 3.5, values: [0.730, 0.558, 0.404, 0.299], endLabel: true }
+  ];
+  legend("lg-weekly", weekly);
+  lineChart("c-weekly", {
+    label: "Weekly correlation per grid cell by lead week. residual_mm is highest in every week (0.730, 0.558, 0.404, 0.299), above Dyn++ (0.668, 0.512, 0.330, 0.239), with the old U-Net, residual and raw ECMWF below both.",
+    yMin: 0, yMax: 0.8, yTicks: [0, 0.2, 0.4, 0.6, 0.8], height: 320, xPad: 40, markers: true,
+    xTicks: [1, 2, 3, 4], xTickLabel: (w) => `week ${w}`, xLabel: "lead week (days 1–7, 8–14, 15–21, 22–28)",
+    tipTitle: (w) => `Week ${w}`, series: weekly
   });
 
-  dotChart("c-exp5", {
-    label: "Average correlation by number of inputs: 5 inputs 0.442, 9 inputs 0.442, 13 inputs 0.441, 17 inputs 0.444. All inside the retraining-noise band.",
-    xMin: 0.43, xMax: 0.45, ticks: [0.43, 0.435, 0.44, 0.445, 0.45], band: [0.440, 0.444],
-    rows: [
-      { label: "5 inputs (rain only)", value: 0.442 },
-      { label: "9 inputs (+ humidity)", value: 0.442 },
-      { label: "13 inputs (+ winds)", value: 0.441 },
-      { label: "17 inputs (all)", value: 0.444 }
-    ]
-  });
-  const figs = () => document.querySelectorAll("#review details.fig");
-  document.getElementById("figs-open").addEventListener("click", () => figs().forEach((d) => (d.open = true)));
-  document.getElementById("figs-close").addEventListener("click", () => figs().forEach((d) => (d.open = false)));
+  // ---- figure open/close buttons
+  document.querySelectorAll("[data-figs]").forEach((b) => b.addEventListener("click", () => {
+    document.querySelectorAll(`#${b.dataset.figs} details.fig`).forEach((d) => (d.open = b.dataset.open === "1"));
+  }));
+
+  // ---- tabs
+  const tabs = [document.getElementById("tab-1"), document.getElementById("tab-2")];
+  const pages = [document.getElementById("page-1"), document.getElementById("page-2")];
+  function show(i, scroll) {
+    tabs.forEach((t, k) => t.setAttribute("aria-selected", k === i ? "true" : "false"));
+    pages.forEach((p, k) => (p.hidden = k !== i));
+    if (scroll) window.scrollTo({ top: 0 });
+    try { history.replaceState(null, "", i === 1 ? "#latest" : "#"); } catch (e) {}
+  }
+  tabs.forEach((t, i) => t.addEventListener("click", () => show(i, true)));
+  document.querySelectorAll("[data-goto]").forEach((a) => a.addEventListener("click", (ev) => { ev.preventDefault(); show(+a.dataset.goto - 1, true); }));
+  if (location.hash === "#latest" || location.hash.startsWith("#exp9") || location.hash.startsWith("#exp10")) show(1, false);
 })();
 </script>

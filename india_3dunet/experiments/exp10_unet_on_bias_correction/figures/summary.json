@@ -1,0 +1,74 @@
+{
+ "allindia_anomaly_r": {
+  "week1": {
+   "Dyn++ (bias correction)": 0.9081682292829361,
+   "residual (log space)": 0.6143150534429479,
+   "residual_mm (mm/day)": 0.8841532540936488
+  },
+  "week2": {
+   "Dyn++ (bias correction)": 0.8350611916745998,
+   "residual (log space)": 0.40169437185941514,
+   "residual_mm (mm/day)": 0.8343118970562151
+  },
+  "week3": {
+   "Dyn++ (bias correction)": 0.583367206814492,
+   "residual (log space)": 0.19560791529271504,
+   "residual_mm (mm/day)": 0.6148621263763908
+  },
+  "week4": {
+   "Dyn++ (bias correction)": 0.3769408124897586,
+   "residual (log space)": 0.11404988395006727,
+   "residual_mm (mm/day)": 0.4467354516075279
+  }
+ },
+ "cities_r": {
+  "Delhi_week1": {
+   "Dyn++ (bias correction)": 0.6692961123242277,
+   "residual (log space)": 0.5820494912447026,
+   "residual_mm (mm/day)": 0.7031057360827486
+  },
+  "Delhi_week3": {
+   "Dyn++ (bias correction)": 0.3180225004317023,
+   "residual (log space)": 0.14518886560402305,
+   "residual_mm (mm/day)": 0.2771252123175512
+  },
+  "Mumbai_week1": {
+   "Dyn++ (bias correction)": 0.8141314206334477,
+   "residual (log space)": 0.8301368674902468,
+   "residual_mm (mm/day)": 0.8430648292908489
+  },
+  "Mumbai_week3": {
+   "Dyn++ (bias correction)": 0.5037928183390377,
+   "residual (log space)": 0.4909185263653912,
+   "residual_mm (mm/day)": 0.6320700322943168
+  },
+  "Kolkata_week1": {
+   "Dyn++ (bias correction)": 0.6296818124487578,
+   "residual (log space)": 0.5747519938549615,
+   "residual_mm (mm/day)": 0.7055379518503518
+  },
+  "Kolkata_week3": {
+   "Dyn++ (bias correction)": 0.2676196313747707,
+   "residual (log space)": 0.12314708205481968,
+   "residual_mm (mm/day)": 0.5460279029154839
+  },
+  "Chennai_week1": {
+   "Dyn++ (bias correction)": 0.7108521491339297,
+   "residual (log space)": 0.5363655302825084,
+   "residual_mm (mm/day)": 0.7573130278757161
+  },
+  "Chennai_week3": {
+   "Dyn++ (bias correction)": 0.26357129920802447,
+   "residual (log space)": -0.07741588374928382,
+   "residual_mm (mm/day)": 0.24441111990161796
+  }
+ },
+ "cases": {
+  "wettest 28-day period (Jun-Aug issue)": "2022-07-01",
+  "driest Jun-Aug 28-day period": "2023-08-05",
+  "median Jun-Aug 28-day period": "2021-08-26",
+  "driest-vs-wettest pre-monsoon: wettest Mar-May": "2021-05-27",
+  "post-monsoon / NE monsoon: wettest Oct-Dec": "2022-10-07",
+  "winter: wettest Dec-Feb": "2021-12-27"
+ }
+}
