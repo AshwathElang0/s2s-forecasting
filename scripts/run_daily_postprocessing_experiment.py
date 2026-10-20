@@ -12,6 +12,12 @@ import pandas as pd
 import xarray as xr
 from matplotlib import pyplot as plt
 
+from s2s_models.daily_benchmarks import (
+    DeepSetDailyPostprocessor,
+    EmpiricalQuantileMapping,
+    LeadBiasCorrection,
+    LeadClimatology,
+)
 from s2s_models.daily_postprocessing import ECMWFDailyPostprocessor
 
 DEFAULT_DATA_DIR = Path("/home/ash/weather-data/ECMWF_tp_India_2004-2023")
@@ -77,16 +83,19 @@ def load_dates(
     data_dir: Path,
     dates: list[dt.date],
     truth_path: Path,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    controls = []
     members = []
     targets = []
     lat = lon = None
     for init_date in dates:
+        control_daily, lat, lon = load_member_daily(path_for(data_dir, "cf", init_date), "cf")
         member_daily, lat, lon = load_member_daily(path_for(data_dir, "pf", init_date), "pf")
         target_daily = load_truth_daily(truth_path, init_date, lat, lon)
+        controls.append(control_daily[0])
         members.append(member_daily)
         targets.append(target_daily)
-    return np.stack(members), np.stack(targets), lat, lon
+    return np.stack(controls), np.stack(members), np.stack(targets), lat, lon
 
 
 def flatten_daily_data(member_daily: np.ndarray, targets: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -104,6 +113,17 @@ def flatten_daily_data(member_daily: np.ndarray, targets: np.ndarray) -> tuple[n
     return ECMWFDailyPostprocessor.make_features(features_input), target_output
 
 
+def flatten_control_data(control_daily: np.ndarray) -> np.ndarray:
+    """Convert date/grid control trajectories into cell trajectories."""
+    if control_daily.ndim == 4:
+        n_dates, n_days, n_lat, n_lon = control_daily.shape
+        return control_daily.transpose(0, 2, 3, 1).reshape(n_dates * n_lat * n_lon, n_days)
+    if control_daily.ndim == 3:
+        n_dates, n_days, n_cells = control_daily.shape
+        return control_daily.transpose(0, 2, 1).reshape(n_dates * n_cells, n_days)
+    raise ValueError("control_daily must have shape (dates, days, lat, lon) or (dates, days, cells)")
+
+
 def valid_training_cells(train_targets: np.ndarray, test_targets: np.ndarray) -> np.ndarray:
     return np.all(np.isfinite(train_targets), axis=(0, 1)) & np.all(np.isfinite(test_targets), axis=(0, 1))
 
@@ -113,6 +133,24 @@ def scores(targets: np.ndarray, predictions: np.ndarray) -> dict[str, float]:
     return {
         "rmse": float(np.sqrt(np.mean(residuals**2))),
         "mae": float(np.mean(np.abs(residuals))),
+    }
+
+
+def event_scores(targets: np.ndarray, predictions: np.ndarray, threshold: float) -> dict[str, float]:
+    """Evaluate deterministic wet/extreme event decisions at a fixed threshold."""
+    observed = targets > threshold
+    predicted = predictions > threshold
+    hits = np.sum(observed & predicted)
+    false_alarms = np.sum(~observed & predicted)
+    misses = np.sum(observed & ~predicted)
+    precision = hits / max(1, hits + false_alarms)
+    recall = hits / max(1, hits + misses)
+    return {
+        "threshold": float(threshold),
+        "event_rate": float(np.mean(observed)),
+        "precision": float(precision),
+        "recall": float(recall),
+        "f1": float(2.0 * precision * recall / max(1e-12, precision + recall)),
     }
 
 
@@ -143,8 +181,8 @@ def run(args: argparse.Namespace) -> dict[str, object]:
 
     print(f"Train: {len(train_dates)} dates ({train_dates[0]} to {train_dates[-1]})")
     print(f"Test: {len(test_dates)} dates ({test_dates[0]} to {test_dates[-1]})")
-    train_members, train_targets, lat, lon = load_dates(args.data_dir, train_dates, args.truth_data_path)
-    test_members, test_targets, test_lat, test_lon = load_dates(args.data_dir, test_dates, args.truth_data_path)
+    train_control, train_members, train_targets, lat, lon = load_dates(args.data_dir, train_dates, args.truth_data_path)
+    test_control, test_members, test_targets, test_lat, test_lon = load_dates(args.data_dir, test_dates, args.truth_data_path)
     if not (np.array_equal(lat, test_lat) and np.array_equal(lon, test_lon)):
         raise ValueError("Train/test grids differ")
 
@@ -153,17 +191,27 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         raise ValueError("No grid cells have complete valid targets")
     train_members = train_members[:, :, :, valid_cells]
     test_members = test_members[:, :, :, valid_cells]
+    train_control = train_control[:, :, valid_cells]
+    test_control = test_control[:, :, valid_cells]
     train_targets = np.nan_to_num(train_targets[:, :, valid_cells], nan=0.0)
     test_targets = np.nan_to_num(test_targets[:, :, valid_cells], nan=0.0)
 
     train_features, train_y = flatten_daily_data(train_members, train_targets)
     test_features, test_y = flatten_daily_data(test_members, test_targets)
+    train_control_flat = flatten_control_data(train_control)
+    test_control_flat = flatten_control_data(test_control)
     validation_count = max(1, len(train_dates) // 5)
     fit_date_count = len(train_dates) - validation_count
     cells = int(np.sum(valid_cells))
     fit_rows = fit_date_count * cells
     fit_features, fit_y = train_features[:fit_rows], train_y[:fit_rows]
     validation_features, validation_y = train_features[fit_rows:], train_y[fit_rows:]
+    fit_control, validation_control = train_control_flat[:fit_rows], train_control_flat[fit_rows:]
+    fit_members = train_members.transpose(0, 3, 1, 2).reshape(len(train_dates), cells, train_members.shape[1], N_DAYS)
+    test_members_flat = test_members.transpose(0, 3, 1, 2).reshape(len(test_dates), cells, test_members.shape[1], N_DAYS)
+    fit_members = fit_members[:fit_date_count].reshape(fit_rows, train_members.shape[1], N_DAYS)
+    validation_members = train_members.transpose(0, 3, 1, 2).reshape(len(train_dates), cells, train_members.shape[1], N_DAYS)[fit_date_count:].reshape(len(validation_y), train_members.shape[1], N_DAYS)
+    test_members_flat = test_members_flat.reshape(len(test_dates) * cells, test_members.shape[1], N_DAYS)
 
     model = ECMWFDailyPostprocessor(
         epochs=args.epochs,
@@ -176,25 +224,57 @@ def run(args: argparse.Namespace) -> dict[str, object]:
     predictions = model.predict(test_features)
     raw_predictions = test_features[:, :, 0]
 
+    climatology = LeadClimatology().fit(fit_y)
+    bias_correction = LeadBiasCorrection().fit(fit_control, fit_y)
+    quantile_mapping = EmpiricalQuantileMapping().fit(fit_control, fit_y)
+    deepset = DeepSetDailyPostprocessor(epochs=args.deepset_epochs, hidden_dim=args.deepset_hidden_dim)
+    deepset.fit(fit_members, fit_y, validation_data=(validation_members, validation_y))
+    method_predictions = {
+        "raw_ecmwf_control": test_control_flat,
+        "raw_ensemble_mean": raw_predictions,
+        "lead_climatology": climatology.predict(len(test_y)),
+        "lead_bias_correction": bias_correction.predict(test_control_flat),
+        "empirical_quantile_mapping": quantile_mapping.predict(test_control_flat),
+        "deepsets_ensemble_postprocessor": deepset.predict(test_members_flat),
+        "temporal_residual_model": predictions,
+    }
+    daily_threshold = float(np.quantile(fit_y, 0.95))
+
     result = {
         "experiment": "ECMWF-only daily 28-day precipitation post-processing",
         "forecast_time_inputs": ["ECMWF perturbed members", "calendar encoded by forecast order"],
         "observations_used_at_forecast_time": False,
+        "benchmark_methods": {
+            "raw_ecmwf_control": "Unpostprocessed ECMWF control forecast",
+            "raw_ensemble_mean": "Unpostprocessed mean of perturbed members",
+            "lead_climatology": "Lead-dependent training-period rainfall mean",
+            "lead_bias_correction": "Lead-dependent additive mean-bias correction",
+            "empirical_quantile_mapping": "Lead-wise empirical quantile mapping",
+            "deepsets_ensemble_postprocessor": "Permutation-invariant DeepSets-style neural residual model, paper-inspired adaptation",
+            "temporal_residual_model": "Shared temporal convolutional residual model with extreme-weighted log-SmoothL1 loss",
+        },
+        "benchmark_references": [
+            "Permutation-invariant neural ensemble post-processing (AIES-D-23-0070.1), adapted to this India daily dataset",
+            "Hybrid analog/CNN and spatial precipitation post-processing are planned follow-up comparisons, not exact reproductions in this run",
+        ],
         "train_dates": [str(date) for date in train_dates],
         "test_dates": [str(date) for date in test_dates],
         "valid_grid_cells": cells,
-        "daily_scores": {
-            "raw_ensemble_mean": scores(test_y, raw_predictions),
-            "temporal_residual_model": scores(test_y, predictions),
+        "daily_scores": {name: scores(test_y, prediction) for name, prediction in method_predictions.items()},
+        "daily_event_scores_95th_training_percentile": {
+            name: event_scores(test_y, prediction, daily_threshold)
+            for name, prediction in method_predictions.items()
         },
         "weekly_scores": {},
         "training_history": model.history_,
+        "benchmark_training_history": deepset.history_,
     }
     for week in range(4):
         start, end = week * 7, (week + 1) * 7
+        weekly_targets = test_y[:, start:end].sum(axis=1)
         result["weekly_scores"][str(week + 1)] = {
-            "raw_ensemble_mean": scores(test_y[:, start:end].sum(axis=1), raw_predictions[:, start:end].sum(axis=1)),
-            "temporal_residual_model": scores(test_y[:, start:end].sum(axis=1), predictions[:, start:end].sum(axis=1)),
+            name: scores(weekly_targets, prediction[:, start:end].sum(axis=1))
+            for name, prediction in method_predictions.items()
         }
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -218,6 +298,8 @@ def main() -> None:
     parser.add_argument("--smoothness-weight", type=float, default=0.05)
     parser.add_argument("--extreme-weight", type=float, default=1.5)
     parser.add_argument("--extreme-threshold", type=float, default=10.0)
+    parser.add_argument("--deepset-epochs", type=int, default=20)
+    parser.add_argument("--deepset-hidden-dim", type=int, default=16)
     args = parser.parse_args()
     run(args)
 

@@ -102,6 +102,15 @@ Run the current `ECMWFDailyPostprocessor` with only ensemble-derived features. C
 
 Success requires improvement on held-out dates in either daily RMSE or weekly RMSE without materially worsening calibration.
 
+**Completed benchmark run:** The first full comparison used 2017-2019 training dates
+and 2020 test dates. It included the raw ECMWF control, raw ensemble mean, lead
+climatology, lead-wise additive bias correction, empirical quantile mapping, a
+DeepSets-style permutation-invariant ensemble post-processor, and the proposed
+temporal residual model. The temporal residual model had the lowest daily RMSE and
+weekly RMSE at all four leads on this split. The DeepSets adaptation had lower daily
+MAE but higher RMSE and lower extreme-event F1, so it does not yet establish a
+dominant neural benchmark.
+
 ### Stage 3: add spatial context
 
 Extend the model to see neighboring ECMWF grid cells or a compact spatial convolution. The current first version treats each grid-cell trajectory independently; spatial coherence is a planned extension.
@@ -113,6 +122,11 @@ Replace the point correction with a zero-inflated Gamma, hurdle, quantile, or en
 ### Stage 5: compare against stronger post-processing methods
 
 Test permutation-invariant ensemble networks, analog-CNN post-processing, and spatially coherent precipitation post-processing ideas. The comparison should focus on whether the proposed method provides a useful accuracy/complexity tradeoff for the India domain.
+
+The current DeepSets benchmark is a reproducible adaptation of the permutation-
+invariant ensemble-network direction. It is not an exact reproduction of the
+published paper because the paper's data, domains, variables, and training protocol
+are different. Analog-CNN and spatially coherent CNN comparisons remain future work.
 
 ### Stage 6: rolling-origin paper evaluation
 
